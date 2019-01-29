@@ -2,15 +2,21 @@ import re
 import json
 from collections import Counter
 
+regex = "[^\w'_]+"
+
 with open('proj1_data.json') as f:
     data = json.load(f)
 
 word_count = Counter()
 for dp in data[:10000]:
-    dp['text'] = dp['text'].lower().split()
+    text = dp['text'].lower()
+    dp['text'] = text.split()
+    dp['regex'] = re.split(regex, text)
     word_count += Counter(dp['text'])
 for dp in data[10000:]:
-    dp['text'] = dp['text'].lower().split()
+    text = dp['text'].lower()
+    dp['text'] = text.split()
+    dp['regex'] = re.split(regex, text)
 
 train_data = data[:10000]
 test_data = data[10000:11000]
