@@ -3,6 +3,11 @@ import json
 import numpy as np
 from collections import Counter
 
+from nltk.classify import NaiveBayesClassifier
+from nltk.corpus import subjectivity
+from nltk.sentiment import SentimentAnalyzer
+from nltk.sentiment.util import *
+
 regex = "[^\w'_]+"
 
 def preprocess_data(data_path):
