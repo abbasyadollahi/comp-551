@@ -10,6 +10,7 @@ from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from nltk import download as nltk_download
 
 punct_regex = "[^\w'_]+"
+num_most_common = 160
 lexicon = 'vader_lexicon'
 swear_path = './data/curse_words.txt'
 data_path = './data/proj1_data.json'
@@ -38,6 +39,7 @@ def compute_features(data):
     swears = load_swears(swear_path)
 
     word_count = Counter()
+    word_count_regex = Counter()
     for dp in data:
         text = dp['text']
 
@@ -52,8 +54,9 @@ def compute_features(data):
 
         dp['text'] = text.split()
         word_count += Counter(dp['text'])
+        word_count_regex += Counter(dp['no_punct'])
 
-    top_words_160 = word_count.most_common(160)
+    top_words = [w[0] for w in word_count.most_common(num_most_common)]
 
     for dp in data:
         dp['num_words'] = len(dp['no_punct'])
@@ -61,10 +64,15 @@ def compute_features(data):
         dp['num_swears'] = count_swears(dp['no_punct'], swears)
 
         text = Counter(dp['text'])
-        dp['x160'] = [text.get(w, 0) for w, _ in top_words_160]
-    
-    
-    return data
+        dp['most_common'] = [text.get(w, 0) for w in top_words]
+
+    features = []
+    for dp in data:
+        features.append([dp['children'], dp['controversiality'], dp['is_root'], dp['num_words'], dp['sentiment'], dp['num_caps'], dp['num_swears']] + dp['most_common'])
+    X = np.array(features)
+    y = np.array([dp['popularity_score'] for dp in data])
+
+    return X, y
 
 def check_lexicon():
     if not os.path.exists(os.path.join(Path.home(), f'nltk_data/sentiment/{lexicon}.zip')):
@@ -87,5 +95,8 @@ def count_swears(words, swears):
     return num_swears
 
 train, validation, test = preprocess_data(data_path)
-features = compute_features(train)
-print(features)
+X, y = compute_features(train)
+
+print(y)
+print(y.shape)
+print(X.shape)
