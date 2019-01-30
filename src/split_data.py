@@ -5,38 +5,36 @@ from collections import Counter
 
 regex = "[^\w'_]+"
 
-def split_data(data_path):
+def preprocess_data(data_path):
+
     with open(data_path) as f:
         data = json.load(f)
 
-    word_count = Counter()
-    for dp in data[:10000]:
-        text = dp['text'].lower()
-        dp['text'] = text.split()
-        dp['regex'] = re.split(regex, text)
+    for dp in data:
         dp['is_root'] = 1 if dp['is_root'] else 0
-        word_count += Counter(dp['text'])
-    for dp in data[10000:]:
-        text = dp['text'].lower()
-        dp['text'] = text.split()
-        dp['regex'] = re.split(regex, text)
 
-    train_data = data[:10000]
-    test_data = data[10000:11000]
-    validation_data = data[11000:]
+    train_set = data[:10000]
+    validation_set = data[10000:11000]
+    test_set = data[11000:]
 
-    return train_data, test_data, validation_data
+    return train_set, validation_set, test_set
 
+#TODO: Implement semantic analysis + other features
+#TODO: Dump most common word to words.txt
 def compute_features(data):
+
     word_count = Counter()
     for dp in data:
+        text = dp['text']
+        dp['num_caps'] = sum(1 for c in text if c.isupper)
+        dp['text'] = text.lower().split()
         word_count += Counter(dp['text'])
     top_words_160 = word_count.most_common(160)
 
     for dp in data:
+        dp['no_punct'] = re.split(regex, dp['text'].lower())
+        dp['num_words'] = len(dp['no_punct'])
         text = Counter(dp['text'])
         dp['x160'] = [text.get(w, 0) for w, _ in top_words_160]
-
-
-        "You are my favorite human_being! I'm in love with you_you_you..."
-0.06512928009033203
+    
+    return data
