@@ -13,7 +13,7 @@ from nltk import download as nltk_download
 
 class PreprocessData:
 
-    NUM_TOP_WORDS = 160
+    NUM_TOP_WORDS = 60
     LEXICON = 'vader_lexicon'
     PUNCTUATION_REGEX = "[^\w'_]+"
     DATA_PATH = '../data/proj1_data.json'
@@ -52,7 +52,7 @@ class PreprocessData:
 
     def split_data(self, data):
         # return data[:10000], data[10000:11000], data[11000:]
-        return data[:100], data[100:110], data[110:120]
+        return data[:1000], data[1000:1100], data[1100:1200]
 
 
     def compute_most_common_words(self, data, regex=False):
@@ -73,7 +73,6 @@ class PreprocessData:
         for dp in data:
             text = Counter(dp['text_split'])
             most_common.append([text.get(word, 0) for word in top_words])
-
         return most_common
 
 
@@ -110,11 +109,11 @@ class PreprocessData:
 
         for i, x in enumerate(self.X):
             x += top_words[i]
-            x.append(num_curse_words[i])
-            x.append(num_capitals[i])
-            x.append(num_words[i])
-            x.append(sentiment[i])
-            x.append(links[i])
+            # x.append(num_curse_words[i])
+            # x.append(num_capitals[i])
+            # x.append(num_words[i])
+            # x.append(sentiment[i])
+            # x.append(links[i])
             x.append(1)
 
         X = np.array(self.X)
