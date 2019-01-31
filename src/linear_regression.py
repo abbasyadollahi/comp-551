@@ -17,8 +17,8 @@ def linear_gradient_descent(X, y, w_init, decay_speed, learn_rate, min_err, max_
     xty_product = np.matmul(x_transpose, y)
 
     while True:
-        alpha = learn_rate / (1 + decay_speed)
-        w_curr = w_prev - (2*alpha*(np.matmul(xtx_product, w_prev) - xty_product))
+        curr_learn_rate = learn_rate / (1 + decay_speed*(num_iter+1))
+        w_curr = w_prev - 2*curr_learn_rate*(np.matmul(xtx_product, w_prev) - xty_product)
         if math.sqrt(np.linalg.norm(w_curr - w_prev)) > min_err or num_iter > max_iter:
             break
         num_iter += 1
