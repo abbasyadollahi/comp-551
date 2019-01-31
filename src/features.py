@@ -71,7 +71,7 @@ class PreprocessData:
 
         most_common = []
         for dp in data:
-            text = Counter(dp['text_lower'])
+            text = Counter(dp['text_split'])
             most_common.append([text.get(word, 0) for word in top_words])
 
         return most_common
@@ -115,6 +115,7 @@ class PreprocessData:
             x.append(num_words[i])
             x.append(sentiment[i])
             x.append(links[i])
+            x.append(1)
 
         X = np.array(self.X)
         y = np.array(self.y)
@@ -139,7 +140,7 @@ ppd = PreprocessData()
 train, validation, test = ppd.preprocess_data(ppd.data)
 ppd.compute_most_common_words(train)
 X, y = ppd.compute_features(train)
-for i in range(5):
-    print(X[i])
-    print(y[i])
-    print(train[i])
+# for i in range(5):
+#     print(X[i])
+#     print(y[i])
+#     print(train[i])
