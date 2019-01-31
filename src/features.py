@@ -92,7 +92,7 @@ class PreprocessData:
 
     def feature_curse_words(self, data):
         curse_words = self.load_swears(self.CURSE_WORDS_PATH)
-        return [self.count_swears(dp['np_regex'], curse_words) for dp in data]
+        return [self.count_swears(dp['text'], curse_words) for dp in data]
 
 
     def feature_num_words(self, data):
@@ -120,12 +120,12 @@ class PreprocessData:
 
         return X, y
 
-    def check_lexicon(self):
+    def download_lexicon(self):
         if not os.path.exists(os.path.join(Path.home(), f'nltk_data/sentiment/{self.LEXICON}.zip')):
             nltk_download('vader_lexicon')
 
     def sentiment_analysis(self, text):
-        self.check_lexicon()
+        self.download_lexicon()
 
         sia = SentimentIntensityAnalyzer()
         ss = sia.polarity_scores(text)
@@ -136,8 +136,8 @@ class PreprocessData:
             swears = f.readlines()
         return swears
 
-    def count_swears(self, words, swears):
-        num_swears = sum(1 for w in words if w in swears)
+    def count_swears(self, words, curses):
+        return sum(1 for curse in curses if curse in words)
 
 
 ppd = PreprocessData()
