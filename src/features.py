@@ -16,9 +16,9 @@ class PreprocessData:
     NUM_TOP_WORDS = 160
     LEXICON = 'vader_lexicon'
     PUNCTUATION_REGEX = "[^\w'_]+"
-    DATA_PATH = './data/proj1_data.json'
-    CURSE_WORDS_PATH = './data/curse_words.txt'
-    TOP_WORDS_PATH = './words.txt'
+    DATA_PATH = '../data/proj1_data.json'
+    CURSE_WORDS_PATH = '../data/curse_words.txt'
+    TOP_WORDS_PATH = '../../words.txt'
 
 
     def __init__(self):
