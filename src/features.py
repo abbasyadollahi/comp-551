@@ -26,7 +26,7 @@ class PreprocessData:
 	        os.chdir(os.path.join(os.getcwd(), 'src'))
 	        print(os.getcwd())
         except:
-            print('Fail')
+            pass
         
         with open(self.DATA_PATH) as f:
             data = json.load(f)
