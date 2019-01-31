@@ -22,5 +22,5 @@ def linear_gradient_descent(X, y, w_init, decay_speed, learn_rate, min_err, max_
         w_prev = w_curr
         num_iter += 1
         if num_iter % (max_iter // 100) == 0:
-            print(f'Error: {err} Learning rate: {curr_learn_rate}')
+            print(f'Error: {err} | Learning rate: {curr_learn_rate}')
     return w_curr
