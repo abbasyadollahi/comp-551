@@ -27,6 +27,12 @@ class PreprocessData:
 
         with open(self.CURSE_WORDS_PATH) as f:
             curses = f.read().splitlines()
+        
+        try:
+	        os.chdir(os.path.join(os.getcwd(), 'src'))
+	        print(os.getcwd())
+        except:
+	        pass
 
         self.data = data
         self.curses = curses
