@@ -16,11 +16,11 @@ def linear_gradient_descent(X, y, w_init, decay_speed, learn_rate, min_err, max_
         curr_learn_rate = learn_rate / (1 + decay_speed*(num_iter+1))
         w_curr = w_prev - 2*curr_learn_rate*(np.matmul(xtx_product, w_prev) - xty_product)
         err = np.linalg.norm(w_curr - w_prev)
-        if err < min_err or num_iter > max_iter:
+        if err < min_err or num_iter >= max_iter:
             print(f'Finished after {num_iter} iterations')
             break
         w_prev = w_curr
         num_iter += 1
         if num_iter % (max_iter // 100) == 0:
-            print(f'Error: {err}')
+            print(f'Error: {err} Learning rate: {curr_learn_rate}')
     return w_curr
