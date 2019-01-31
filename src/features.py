@@ -36,8 +36,9 @@ class PreprocessData:
 
     def preprocess_data(self, data):
         for dp in data:
-            dp['split_text'] = dp['text'].lower().split()
-            dp['np_regex'] = re.split(self.PUNCTUATION_REGEX, dp['text'].lower())
+            dp['text_lower'] = dp['text'].lower()
+            dp['text_split'] = dp['text_lower'].split()
+            dp['text_regex'] = re.split(self.PUNCTUATION_REGEX, dp['text_lower'])
             dp['is_root'] = 1 if dp['is_root'] else 0
 
         return self.split_data(data)
@@ -57,7 +58,7 @@ class PreprocessData:
     def compute_most_common_words(self, data, regex=False):
         word_count = Counter()
         for dp in data:
-            word_count += Counter(dp['split_text']) if not regex else Counter(dp['np_regex'])
+            word_count += Counter(dp['text_split']) if not regex else Counter(dp['text_regex'])
 
         top_words = [w[0] for w in word_count.most_common(self.NUM_TOP_WORDS)]
         with open(self.TOP_WORDS_PATH, 'w+') as f:
@@ -77,7 +78,7 @@ class PreprocessData:
 
 
     def feature_num_curse_words(self, data):
-        return [self.count_curses(dp['text']) for dp in data]
+        return [self.count_curses(dp['text_lower']) for dp in data]
 
 
     def feature_num_capitals(self, data):
@@ -85,7 +86,7 @@ class PreprocessData:
 
 
     def feature_num_words(self, data):
-        return [len(dp['split_text']) for dp in data]
+        return [len(dp['text_split']) for dp in data]
 
 
     def feature_sentiment(self, data):
@@ -94,7 +95,7 @@ class PreprocessData:
 
     def feature_links(self, data):
         url = ['http', 'www', '.com', '.ca']
-        return [1 if any(s in dp['text'] for s in url) else 0 for dp in data]
+        return [1 if any(s in dp['text_lower'] for s in url) else 0 for dp in data]
 
 
     def compute_features(self, data):
@@ -130,8 +131,8 @@ class PreprocessData:
             nltk_download('vader_lexicon', download_dir='.')
 
         sia = SentimentIntensityAnalyzer()
-        ss = sia.polarity_scores(text)
-        return ss
+        ps = sia.polarity_scores(text)
+        return ps
 
 
 ppd = PreprocessData()
