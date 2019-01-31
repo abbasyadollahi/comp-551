@@ -67,11 +67,11 @@ class PreprocessData:
 
     def feature_most_common_words(self, data):
         with open(self.TOP_WORDS_PATH, 'r+') as f:
-            top_words = f.readlines()
+            top_words = f.read().splitlines()
 
         most_common = []
         for dp in data:
-            text = Counter(dp['text'])
+            text = Counter(dp['text_lower'])
             most_common.append([text.get(word, 0) for word in top_words])
 
         return most_common
@@ -139,9 +139,7 @@ ppd = PreprocessData()
 train, validation, test = ppd.preprocess_data(ppd.data)
 ppd.compute_most_common_words(train)
 X, y = ppd.compute_features(train)
-# print(X.shape)
-# print(y.shape)
-# for i in range(5):
-#     print(X[i])
-#     print(y[i])
-#     print(train[i])
+for i in range(5):
+    print(X[i])
+    print(y[i])
+    print(train[i])
