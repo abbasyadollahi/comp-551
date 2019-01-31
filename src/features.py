@@ -109,11 +109,11 @@ class PreprocessData:
 
         for i, x in enumerate(self.X):
             x += top_words[i]
-            # x.append(num_curse_words[i])
-            # x.append(num_capitals[i])
-            # x.append(num_words[i])
-            # x.append(sentiment[i])
-            # x.append(links[i])
+            x.append(num_curse_words[i])
+            x.append(num_capitals[i])
+            x.append(num_words[i])
+            x.append(sentiment[i])
+            x.append(links[i])
             x.append(1)
 
         X = np.array(self.X)
@@ -135,10 +135,10 @@ class PreprocessData:
         return ps
 
 
-ppd = PreprocessData()
-train, validation, test = ppd.preprocess_data(ppd.data)
-ppd.compute_most_common_words(train)
-X, y = ppd.compute_features(train)
+# ppd = PreprocessData()
+# train, validation, test = ppd.preprocess_data(ppd.data)
+# ppd.compute_most_common_words(train)
+# X, y = ppd.compute_features(train)
 # for i in range(5):
 #     print(X[i])
 #     print(y[i])
