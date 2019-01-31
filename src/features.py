@@ -18,21 +18,21 @@ class PreprocessData:
     PUNCTUATION_REGEX = "[^\w'_]+"
     DATA_PATH = '../data/proj1_data.json'
     CURSE_WORDS_PATH = '../data/curse_words.txt'
-    TOP_WORDS_PATH = '../../words.txt'
+    TOP_WORDS_PATH = '../words.txt'
 
 
     def __init__(self):
+        try:
+	        os.chdir(os.path.join(os.getcwd(), 'src'))
+	        print(os.getcwd())
+        except:
+            print('Fail')
+        
         with open(self.DATA_PATH) as f:
             data = json.load(f)
 
         with open(self.CURSE_WORDS_PATH) as f:
             curses = f.read().splitlines()
-        
-        try:
-	        os.chdir(os.path.join(os.getcwd(), 'src'))
-	        print(os.getcwd())
-        except:
-	        pass
 
         self.data = data
         self.curses = curses
@@ -51,6 +51,8 @@ class PreprocessData:
 
 
     def initialize(self, data):
+        self.X = []
+        self.y = []
         for dp in data:
             self.X.append([dp['children'], dp['controversiality'], dp['is_root']])
             self.y.append(dp['popularity_score'])
@@ -70,15 +72,21 @@ class PreprocessData:
         with open(self.TOP_WORDS_PATH, 'w+') as f:
             f.writelines(f'{word}\n' for word in top_words)
 
-
-    def feature_most_common_words(self, data):
+    
+    #TODO: Modify to only read first n lines, passed as param
+    def feature_most_common_words(self, data, num_lines):
+        top_words = []
         with open(self.TOP_WORDS_PATH, 'r+') as f:
-            top_words = f.read().splitlines()
+            for i, line in enumerate(f.readlines()):
+                if i > num_lines - 1:
+                    break
+                top_words.append(line.split()[0])
 
         most_common = []
-        for dp in data:
-            text = Counter(dp['text_split'])
-            most_common.append([text.get(word, 0) for word in top_words])
+        if top_words:
+            for dp in data:
+                text = Counter(dp['text_split'])
+                most_common.append([text.get(word, 0) for word in top_words])
         return most_common
 
 
@@ -103,24 +111,30 @@ class PreprocessData:
         return [1 if any(s in dp['text_lower'] for s in url) else 0 for dp in data]
 
 
-    def compute_features(self, data):
+    def compute_features(self, data, simple=False, num_word_features=160):
         self.initialize(data)
 
-        top_words = self.feature_most_common_words(data)
-        num_curse_words = self.feature_num_curse_words(data)
-        num_capitals = self.feature_num_capitals(data)
-        num_words = self.feature_num_words(data)
-        sentiment = self.feature_sentiment(data)
-        links = self.feature_links(data)
+        # Just add bias term
+        if simple:
+            for i, x in enumerate(self.X):
+                x.append(1)
+        else:
+            top_words = self.feature_most_common_words(data, num_word_features)
+            num_curse_words = self.feature_num_curse_words(data)
+            num_capitals = self.feature_num_capitals(data)
+            num_words = self.feature_num_words(data)
+            sentiment = self.feature_sentiment(data)
+            links = self.feature_links(data)
 
-        for i, x in enumerate(self.X):
-            x += top_words[i]
-            x.append(num_curse_words[i])
-            x.append(num_capitals[i])
-            x.append(num_words[i])
-            x.append(sentiment[i])
-            x.append(links[i])
-            x.append(1)
+            for i, x in enumerate(self.X):
+                if top_words:
+                    x += top_words[i]
+                x.append(num_curse_words[i])
+                x.append(num_capitals[i])
+                x.append(num_words[i])
+                x.append(sentiment[i])
+                x.append(links[i])
+                x.append(1)
 
         X = np.array(self.X)
         y = np.array(self.y)
@@ -144,7 +158,9 @@ class PreprocessData:
 # ppd = PreprocessData()
 # train, validation, test = ppd.preprocess_data(ppd.data)
 # ppd.compute_most_common_words(train)
-# X, y = ppd.compute_features(train)
+# X, y = ppd.compute_features(validation, num_word_features=60)
+# print(X.shape)
+# print(y.shape)
 # for i in range(5):
 #     print(X[i])
 #     print(y[i])
