@@ -1,2 +1,2 @@
-# comp551
-All files related to COMP 551.
+# COMP 551 - MiniProject 1
+Predicting popularity of Reddit comments using linear regression.
