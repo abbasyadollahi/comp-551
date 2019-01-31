@@ -25,28 +25,22 @@ class PreprocessData:
         with open(self.DATA_PATH) as f:
             data = json.load(f)
 
+        with open(self.CURSE_WORDS_PATH) as f:
+            curses = f.read().splitlines()
+
         self.data = data
-        self.pdata = data
+        self.curses = curses
         self.X = []
         self.y = []
 
 
     def preprocess_data(self, data):
-        # train_set = data[:10000]
-        # validation_set = data[10000:11000]
-        # test_set = data[11000:]
-
-        # DEBUG
-        train_set = data[:100]
-        validation_set = data[100:110]
-        test_set = data[110:120]
-
-        for dp in train_set:
+        for dp in data:
             dp['split_text'] = dp['text'].lower().split()
             dp['np_regex'] = re.split(self.PUNCTUATION_REGEX, dp['text'].lower())
             dp['is_root'] = 1 if dp['is_root'] else 0
 
-        return train_set, validation_set, test_set
+        return self.split_data(data)
 
 
     def initialize(self, data):
@@ -91,12 +85,11 @@ class PreprocessData:
 
 
     def feature_curse_words(self, data):
-        curse_words = self.load_swears(self.CURSE_WORDS_PATH)
-        return [self.count_swears(dp['text'], curse_words) for dp in data]
+        return [self.count_curses(dp['text']) for dp in data]
 
 
     def feature_num_words(self, data):
-        return [len(dp['np_regex']) for dp in data]
+        return [len(dp['split_text']) for dp in data]
 
 
     def compute_features(self, data):
@@ -120,29 +113,26 @@ class PreprocessData:
 
         return X, y
 
-    def download_lexicon(self):
-        if not os.path.exists(os.path.join(Path.home(), f'nltk_data/sentiment/{self.LEXICON}.zip')):
-            nltk_download('vader_lexicon')
 
     def sentiment_analysis(self, text):
-        self.download_lexicon()
+        if not os.path.exists(os.path.join(Path.home(), f'nltk_data/sentiment/{self.LEXICON}.zip')):
+            nltk_download('vader_lexicon')
 
         sia = SentimentIntensityAnalyzer()
         ss = sia.polarity_scores(text)
         return ss
 
-    def load_swears(self, path):
-        with open(self.CURSE_WORDS_PATH) as f:
-            swears = f.readlines()
-        return swears
 
-    def count_swears(self, words, curses):
-        return sum(1 for curse in curses if curse in words)
+    def count_curses(self, words):
+        return sum(1 for curse in self.curses if curse in words)
 
 
 ppd = PreprocessData()
 train, validation, test = ppd.preprocess_data(ppd.data)
 ppd.compute_most_common_words(train)
 X, y = ppd.compute_features(train)
-print(X.shape)
-print(y.shape)
+# print(X.shape)
+# print(y.shape)
+# print(X[:3])
+# print(y[:3])
+# print(train[:3])
