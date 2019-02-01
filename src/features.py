@@ -69,10 +69,7 @@ class PreprocessData:
         for dp in data:
             word_count += Counter(dp['text_split']) if not regex else Counter(dp['text_regex'])
 
-        top_words = []
-        for w in word_count.most_common(self.NUM_TOP_WORDS):
-            if w[0]:
-                top_words.append(w[0])
+        top_words = [w[0] for w in word_count.most_common(self.NUM_TOP_WORDS) if w[0]]
         with open(self.TOP_WORDS_PATH, 'w+') as f:
             f.writelines(f'{word}\n' for word in top_words)
 
@@ -131,10 +128,10 @@ class PreprocessData:
                     x += top_words[i]
                 if extra_features:
                     x.append(num_curse_words[i])
-                    # x.append(num_capitals[i])
+                    x.append(num_capitals[i])
                     x.append(math.log(num_capitals[i]) if num_capitals[i] != 0 else num_capitals[i])
                     x.append(num_words[i])
-                    x.append(math.log(num_words[i]))
+                    x.append(math.log(num_words[i]) if num_words[i] != 0 else num_words[i])
                     # x.append(sentiment[i])
                     x.append(links[i])
                 x.append(1)
