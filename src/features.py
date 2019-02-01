@@ -1,6 +1,8 @@
 import os
 import re
 import json
+import time
+import math
 import numpy as np
 
 from pathlib import Path
@@ -67,7 +69,10 @@ class PreprocessData:
         for dp in data:
             word_count += Counter(dp['text_split']) if not regex else Counter(dp['text_regex'])
 
-        top_words = [w[0] for w in word_count.most_common(self.NUM_TOP_WORDS)]
+        top_words = []
+        for w in word_count.most_common(self.NUM_TOP_WORDS):
+            if w[0]:
+                top_words.append(w[0])
         with open(self.TOP_WORDS_PATH, 'w+') as f:
             f.writelines(f'{word}\n' for word in top_words)
 
@@ -106,7 +111,7 @@ class PreprocessData:
         return [1 if any(s in dp['text_lower'] for s in url) else 0 for dp in data]
 
 
-    def compute_features(self, data, simple=False, num_word_features=160):
+    def compute_features(self, data, simple=False, extra_features=True, num_word_features=160):
         self.initialize(data)
 
         if simple:
@@ -114,20 +119,24 @@ class PreprocessData:
                 x.append(1)
         else:
             top_words = self.feature_most_common_words(data, num_word_features)
-            num_curse_words = self.feature_num_curse_words(data)
-            num_capitals = self.feature_num_capitals(data)
-            num_words = self.feature_num_words(data)
-            sentiment = self.feature_sentiment(data)
-            links = self.feature_links(data)
+            if extra_features:
+                num_curse_words = self.feature_num_curse_words(data)
+                num_capitals = self.feature_num_capitals(data)
+                num_words = self.feature_num_words(data)
+                # sentiment = self.feature_sentiment(data)
+                links = self.feature_links(data)
 
             for i, x in enumerate(self.X):
                 if top_words:
                     x += top_words[i]
-                x.append(num_curse_words[i])
-                x.append(num_capitals[i])
-                x.append(num_words[i])
-                x.append(sentiment[i])
-                x.append(links[i])
+                if extra_features:
+                    x.append(num_curse_words[i])
+                    # x.append(num_capitals[i])
+                    x.append(math.log(num_capitals[i]) if num_capitals[i] != 0 else num_capitals[i])
+                    x.append(num_words[i])
+                    x.append(math.log(num_words[i]))
+                    # x.append(sentiment[i])
+                    x.append(links[i])
                 x.append(1)
 
         X = np.array(self.X)
@@ -147,15 +156,3 @@ class PreprocessData:
         sia = SentimentIntensityAnalyzer()
         ps = sia.polarity_scores(text)
         return ps
-
-
-# ppd = PreprocessData()
-# train, validation, test = ppd.preprocess_data(ppd.data)
-# ppd.compute_most_common_words(train)
-# X, y = ppd.compute_features(validation, num_word_features=60)
-# print(X.shape)
-# print(y.shape)
-# for i in range(5):
-#     print(X[i])
-#     print(y[i])
-#     print(train[i])
