@@ -7,8 +7,8 @@ from pathlib import Path
 from itertools import chain
 from collections import Counter
 
-from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from nltk import download as nltk_download
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
 
 class PreprocessData:
@@ -27,7 +27,7 @@ class PreprocessData:
 	        print(os.getcwd())
         except:
             pass
-        
+
         with open(self.DATA_PATH) as f:
             data = json.load(f)
 
@@ -60,7 +60,6 @@ class PreprocessData:
 
     def split_data(self, data):
         return data[:10000], data[10000:11000], data[11000:]
-        # return data[:1000], data[1000:1100], data[1100:1200]
 
 
     def compute_most_common_words(self, data, regex=False):
@@ -72,21 +71,17 @@ class PreprocessData:
         with open(self.TOP_WORDS_PATH, 'w+') as f:
             f.writelines(f'{word}\n' for word in top_words)
 
-    
-    #TODO: Modify to only read first n lines, passed as param
+
     def feature_most_common_words(self, data, num_lines):
-        top_words = []
         with open(self.TOP_WORDS_PATH, 'r+') as f:
-            for i, line in enumerate(f.readlines()):
-                if i > num_lines - 1:
-                    break
-                top_words.append(line.split()[0])
+            top_words = f.read().splitlines()[:num_lines]
 
         most_common = []
         if top_words:
             for dp in data:
                 text = Counter(dp['text_split'])
                 most_common.append([text.get(word, 0) for word in top_words])
+
         return most_common
 
 
@@ -114,9 +109,8 @@ class PreprocessData:
     def compute_features(self, data, simple=False, num_word_features=160):
         self.initialize(data)
 
-        # Just add bias term
         if simple:
-            for i, x in enumerate(self.X):
+            for x in self.X:
                 x.append(1)
         else:
             top_words = self.feature_most_common_words(data, num_word_features)
