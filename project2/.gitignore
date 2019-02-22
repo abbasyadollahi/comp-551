@@ -2,8 +2,8 @@
 *__pycache__/
 *data/train/
 *data/test/
-*data/model
-*data/result
+*data/model/
+*data/result/
 
 *.csv
 *tempCodeRunnerFile.py

@@ -9,11 +9,12 @@ if __name__ == '__main__':
 	print('Loading data...')
 	start = time.time()
 	data_train = load_train()
-	train, validation = train_test_split(data_train, test_size=0.2)
+	train, validation = train_test_split(data_train, test_size=0.25)
 
 	x, y = zip(*train)
 	x_v, y_v = zip(*validation)
 	print(f'Time to load data: {time.time()-start}')
+
 
 	print('#### Training Logistic Regression ####')
 	print('1. Unigram')
@@ -22,7 +23,6 @@ if __name__ == '__main__':
 	start = time.time()
 	pipeline.fit(x, y)
 	print(f'Training time: {time.time()-start}')
-
 	print(f'Training accuracy: {pipeline.score(x, y)}')
 	print(f'Validation accuracy: {pipeline.score(x_v, y_v)}')
 	save_model(pipeline, 'logreg_unigram.joblib')
@@ -33,7 +33,6 @@ if __name__ == '__main__':
 	start = time.time()
 	pipeline.fit(x, y)
 	print(f'Training time: {time.time()-start}')
-
 	print(f'Training accuracy: {pipeline.score(x, y)}')
 	print(f'Validation accuracy: {pipeline.score(x_v, y_v)}')
 	save_model(pipeline, 'logreg_bigram.joblib')
@@ -44,7 +43,6 @@ if __name__ == '__main__':
 	start = time.time()
 	pipeline.fit(x, y)
 	print(f'Training time: {time.time()-start}')
-
 	print(f'Training accuracy: {pipeline.score(x, y)}')
 	print(f'Validation accuracy: {pipeline.score(x_v, y_v)}')
 	save_model(pipeline, 'logreg_unigram_tfidf.joblib')
@@ -55,10 +53,10 @@ if __name__ == '__main__':
 	start = time.time()
 	pipeline.fit(x, y)
 	print(f'Training time: {time.time()-start}')
-
 	print(f'Training accuracy: {pipeline.score(x, y)}')
 	print(f'Validation accuracy: {pipeline.score(x_v, y_v)}')
 	save_model(pipeline, 'logreg_bigram_tfidf.joblib')
+
 
 	print('#### Training Linear SVC ####')
 	print('1. Unigram')
@@ -67,7 +65,6 @@ if __name__ == '__main__':
 	start = time.time()
 	pipeline.fit(x, y)
 	print(f'Training time: {time.time()-start}')
-
 	print(f'Training accuracy: {pipeline.score(x, y)}')
 	print(f'Validation accuracy: {pipeline.score(x_v, y_v)}')
 	save_model(pipeline, 'linsvc_unigram.joblib')
@@ -78,7 +75,6 @@ if __name__ == '__main__':
 	start = time.time()
 	pipeline.fit(x, y)
 	print(f'Training time: {time.time()-start}')
-
 	print(f'Training accuracy: {pipeline.score(x, y)}')
 	print(f'Validation accuracy: {pipeline.score(x_v, y_v)}')
 	save_model(pipeline, 'linsvc_bigram.joblib')
@@ -89,7 +85,6 @@ if __name__ == '__main__':
 	start = time.time()
 	pipeline.fit(x, y)
 	print(f'Training time: {time.time()-start}')
-
 	print(f'Training accuracy: {pipeline.score(x, y)}')
 	print(f'Validation accuracy: {pipeline.score(x_v, y_v)}')
 	save_model(pipeline, 'linsvc_unigram_tfidf.joblib')
@@ -100,7 +95,6 @@ if __name__ == '__main__':
 	start = time.time()
 	pipeline.fit(x, y)
 	print(f'Training time: {time.time()-start}')
-
 	print(f'Training accuracy: {pipeline.score(x, y)}')
 	print(f'Validation accuracy: {pipeline.score(x_v, y_v)}')
 	save_model(pipeline, 'linsvc_bigram_tfidf.joblib')

@@ -12,10 +12,9 @@ if __name__ == '__main__':
 	print(f'Time to load data: {time.time()-start}')
 
 	print(len(data_test))
-	x_t, _ = zip(*data_test)
 
 	pipeline = load_model('linsvc_bigram_tfidf.joblib')
-	pred = pipeline.predict(x_t)
+	pred = pipeline.predict(data_test)
 	print(pred.shape)
 	print(pred[0])
-	predictions_to_csv(pred, 'LinSVC_bigram_tfidf.csv')
+	predictions_to_csv(pred, 'linsvc_bigram_tfidf.csv')
