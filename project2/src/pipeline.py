@@ -9,7 +9,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import LinearSVC
 
-# from naive_bayes import NaiveBayes
+from naive_bayes import NaiveBayes
 
 class LemmaTokenizer:
     '''
@@ -35,26 +35,23 @@ def get_vectorizer(binary=False, bigram=False, tfidf=False):
         vectorizer.set_params(ngram_range=(1, 2))
     return vectorizer
 
-# def nb_pipeline(bigram=False, tfidf=False):
-#     binary_vectorizer = get_vectorizer(binary=True, bigram=bigram, tfidf=tfidf)
-#     pipeline = Pipeline([
-#         ('vect', binary_vectorizer),
-#         ('clf', NaiveBayes())
-#     ])
-#     return pipeline
+def naive_bayes_pipeline(bigram=False, tfidf=False):
+    vectorizer = get_vectorizer(binary=True, bigram=bigram, tfidf=tfidf)
+    nb = NaiveBayes(vectorizer)
+    return nb
 
 def log_reg_pipeline(bigram=False, tfidf=False):
-    vect = get_vectorizer(bigram=bigram, tfidf=tfidf)
+    vectorizer = get_vectorizer(bigram=bigram, tfidf=tfidf)
     pipeline = Pipeline([
-        ('vect', vect),
+        ('vect', vectorizer),
         ('clf', LogisticRegression(C=1, solver='lbfgs', max_iter=1000, n_jobs=-1))
     ])
     return pipeline
 
 def linear_svc_pipeline(bigram=False, tfidf=False):
-    vect = get_vectorizer(bigram=bigram, tfidf=tfidf)
+    vectorizer = get_vectorizer(bigram=bigram, tfidf=tfidf)
     pipeline = Pipeline([
-        ('vect', vect),
+        ('vect', vectorizer),
         ('clf', LinearSVC(C=1, max_iter=10000))
     ])
     return pipeline
