@@ -41,6 +41,8 @@ def load_sentiment_strength():
     return read_csv(op.join(DATA_DIR, 'sentiment_strength.csv'), index_col=0, squeeze=True).to_dict()
 
 def predictions_to_csv(pred, filename):
+    if not op.isdir(RESULT_DIR):
+        os.makedirs(RESULT_DIR)
     df = DataFrame(pred)
     df.to_csv(op.join(RESULT_DIR, filename), index_label=['Id', 'Category'])
 
@@ -49,6 +51,8 @@ def save_model(model, filename):
     model: Trained classifier
     filename: model.joblib
     '''
+    if not op.isdir(MODEL_DIR):
+        os.makedirs(MODEL_DIR)
     dump(model, op.join(MODEL_DIR, filename))
 
 def load_model(filename):
