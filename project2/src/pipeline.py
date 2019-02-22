@@ -7,7 +7,7 @@ from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.pipeline import Pipeline
-from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import LogisticRegression, SGDClassifier
 from sklearn.svm import LinearSVC
 
 from data import load_sentiment_strength
@@ -61,6 +61,14 @@ def linear_svc_pipeline(max_features, bigram=False, tfidf=False):
     vectorizer = get_vectorizer(max_features, bigram=bigram, tfidf=tfidf)
     pipeline = Pipeline([
         ('vect', vectorizer),
-        ('clf', LinearSVC(C=1, max_iter=10000))
+        ('clf', LinearSVC(C=1, max_iter=1000))
+    ])
+    return pipeline
+
+def sgd_pipeline(max_features, bigram=False, tfidf=False):
+    vectorizer = get_vectorizer(max_features, bigram=bigram, tfidf=tfidf)
+    pipeline = Pipeline([
+        ('vect', vectorizer),
+        ('clf', SGDClassifier(alpha=0.0001, max_iter=1000, tol=1e-4, n_jobs=-1))
     ])
     return pipeline
