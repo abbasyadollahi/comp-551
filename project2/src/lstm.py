@@ -1,7 +1,5 @@
 import time
-import numpy as np
 import matplotlib.pyplot as plt
-from keras.datasets import imdb
 from keras.models import Sequential
 from keras.layers import Dense, LSTM, Embedding
 from keras.layers.convolutional import Conv1D, MaxPooling1D
@@ -36,14 +34,14 @@ model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy']
 
 print(model.summary())
 
-X_train, X_test, Y_train, Y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
 start = time.time()
-history = model.fit(X_train, Y_train, epochs=epochs, batch_size=batch_size, validation_data=(X_test, Y_test))
+history = model.fit(X_train, y_train, epochs=epochs, batch_size=batch_size, validation_data=(X_test, y_test))
 print(f'Training time: {time.time()-start}')
 
-score, acc = model.evaluate(X_test, Y_test, batch_size=batch_size)
-print('Accuracy: %.2f' % acc)
+score, acc = model.evaluate(X_test, y_test, batch_size=batch_size)
+print(f'Accuracy: {acc:.2f}')
 
 model.save('./project2/data/model/lstm.h5')
 
@@ -66,5 +64,4 @@ plt.title('Training and validation accuracy')
 plt.xlabel('Epochs')
 plt.ylabel('Accuracy')
 plt.legend()
-
 plt.show()
