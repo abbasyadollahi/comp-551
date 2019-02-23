@@ -18,6 +18,7 @@ class LemmaTokenizer:
     Tokenizes, lemmatizes and removes stop words.
     Pass this as tokenizer for CountVectorizer.
     '''
+
     def __init__(self):
         self.wnl = WordNetLemmatizer()
         self.stop_words = set(stopwords.words('english'))
@@ -31,13 +32,18 @@ class LemmaTokenizer:
         # return [self.wnl.lemmatize(t, pos=self.penn_to_wn(tag)) for t, tag in pos_tag(tokens_no_stop)]
 
     def penn_to_wn(self, tag):
-        tags = {'NN': wn.NOUN, 'JJ': wn.ADJ, 'VB': wn.VERB, 'RB': wn.ADV}
-        return tags.get(tag[:2], wn.NOUN)
+        tags = {
+            'NN': wn.NOUN, 'NNS': wn.NOUN, 'NNP': wn.NOUN, 'NNPS': wn.NOUN,
+            'JJ': wn.ADJ, 'JJR': wn.ADJ, 'JJS': wn.ADJ,
+            'VB': wn.VERB, 'VBD': wn.VERB, 'VBG': wn.VERB, 'VBN': wn.VERB, 'VBP': wn.VERB, 'VBZ': wn.VERB,
+            'RB': wn.ADV, 'RBS': wn.ADV, 'RBR': wn.ADV
+        }
+        return tags.get(tag, wn.NOUN)
 
 def get_vectorizer(max_features, binary=False, bigram=False, tfidf=False):
-    vectorizer = CountVectorizer(tokenizer=LemmaTokenizer(), max_features=max_features)
+    vectorizer = CountVectorizer(tokenizer=LemmaTokenizer(), max_df=0.5, max_features=max_features)
     if tfidf:
-        vectorizer = TfidfVectorizer(tokenizer=LemmaTokenizer(), max_features=max_features, norm='l2')
+        vectorizer = TfidfVectorizer(tokenizer=LemmaTokenizer(), max_df=0.5, max_features=max_features, norm='l2')
     if binary:
         vectorizer.set_params(binary=True)
     if bigram:
@@ -53,7 +59,7 @@ def log_reg_pipeline(max_features, bigram=False, tfidf=False):
     vectorizer = get_vectorizer(max_features, bigram=bigram, tfidf=tfidf)
     pipeline = Pipeline([
         ('vect', vectorizer),
-        ('clf', LogisticRegression(C=1, solver='lbfgs', max_iter=1000, n_jobs=-1))
+        ('clf', LogisticRegression(C=1, solver='liblinear', max_iter=1000, n_jobs=-1))
     ])
     return pipeline
 
@@ -69,6 +75,6 @@ def sgd_pipeline(max_features, bigram=False, tfidf=False):
     vectorizer = get_vectorizer(max_features, bigram=bigram, tfidf=tfidf)
     pipeline = Pipeline([
         ('vect', vectorizer),
-        ('clf', SGDClassifier(alpha=0.0001, max_iter=1000, tol=1e-4, n_jobs=-1))
+        ('clf', SGDClassifier(loss='log', alpha=0.0001, max_iter=1000, tol=1e-4, n_jobs=-1))
     ])
     return pipeline
