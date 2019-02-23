@@ -31,8 +31,13 @@ class LemmaTokenizer:
         # return [self.wnl.lemmatize(t, pos=self.penn_to_wn(tag)) for t, tag in pos_tag(tokens_no_stop)]
 
     def penn_to_wn(self, tag):
-        tags = {'NN': wn.NOUN, 'JJ': wn.ADJ, 'VB': wn.VERB, 'RB': wn.ADV}
-        return tags.get(tag[:2], wn.NOUN)
+        tags = {
+            'NN': wn.NOUN, 'NNS': wn.NOUN, 'NNP': wn.NOUN, 'NNPS': wn.NOUN,
+            'JJ': wn.ADJ, 'JJR': wn.ADJ, 'JJS': wn.ADJ,
+            'VB': wn.VERB, 'VBD': wn.VERB, 'VBG': wn.VERB, 'VBN': wn.VERB, 'VBP': wn.VERB, 'VBZ': wn.VERB,
+            'RB': wn.ADV, 'RBS': wn.ADV, 'RBR': wn.ADV
+        }
+        return tags.get(tag, wn.NOUN)
 
 def get_vectorizer(max_features, binary=False, bigram=False, tfidf=False):
     vectorizer = CountVectorizer(tokenizer=LemmaTokenizer(), max_features=max_features)
