@@ -1,6 +1,3 @@
-import os
-import numpy as np
-import pandas as pd
 from nltk import pos_tag
 from nltk.corpus import stopwords, wordnet as wn
 from nltk.stem import WordNetLemmatizer
@@ -33,10 +30,10 @@ class LemmaTokenizer:
 
     def penn_to_wn(self, tag):
         tags = {
-            'NN': wn.NOUN, 'NNS': wn.NOUN, 'NNP': wn.NOUN, 'NNPS': wn.NOUN,
             'JJ': wn.ADJ, 'JJR': wn.ADJ, 'JJS': wn.ADJ,
+            'RB': wn.ADV, 'RBS': wn.ADV, 'RBR': wn.ADV,
+            'NN': wn.NOUN, 'NNS': wn.NOUN, 'NNP': wn.NOUN, 'NNPS': wn.NOUN,
             'VB': wn.VERB, 'VBD': wn.VERB, 'VBG': wn.VERB, 'VBN': wn.VERB, 'VBP': wn.VERB, 'VBZ': wn.VERB,
-            'RB': wn.ADV, 'RBS': wn.ADV, 'RBR': wn.ADV
         }
         return tags.get(tag, wn.NOUN)
 
