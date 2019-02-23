@@ -3,12 +3,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 from keras.datasets import imdb
 from keras.models import Sequential
-from keras.layers import Dense, LSTM, Embedding, GRU
+from keras.layers import Dense, LSTM, Embedding
 from keras.layers.convolutional import Conv1D, MaxPooling1D
 from keras.preprocessing.sequence import pad_sequences
 from keras.preprocessing.text import Tokenizer
-from keras.models import load_model
-from keras.utils import plot_model
 from sklearn.model_selection import train_test_split
 
 from data import load_train
@@ -26,7 +24,7 @@ print(len(X))
 embed_size = 64
 lstm_size = 128
 batch_size = 128
-epochs = 10
+epochs = 3
 
 model = Sequential()
 model.add(Embedding(max_features, embed_size, input_length=X.shape[1]))
@@ -37,7 +35,6 @@ model.add(Dense(1, activation='sigmoid'))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 print(model.summary())
-plot_model(model, to_file='model.png', show_shapes=True)
 
 X_train, X_test, Y_train, Y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
@@ -70,5 +67,4 @@ plt.xlabel('Epochs')
 plt.ylabel('Accuracy')
 plt.legend()
 
-plt.savefig('./history.png', dpi='figure')
 plt.show()
