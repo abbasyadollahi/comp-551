@@ -67,7 +67,7 @@ def linear_svc_pipeline(max_features, bigram=False, tfidf=False):
     vectorizer = get_vectorizer(max_features, bigram=bigram, tfidf=tfidf)
     pipeline = Pipeline([
         ('vect', vectorizer),
-        ('clf', LinearSVC(C=1, max_iter=1000))
+        ('clf', LinearSVC(C=1, tol=1e-4, max_iter=1000))
     ])
     return pipeline
 

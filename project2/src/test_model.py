@@ -5,16 +5,17 @@ from data import load_test, predictions_to_csv, save_model, load_model
 from pipeline import naive_bayes_pipeline, log_reg_pipeline, linear_svc_pipeline
 
 if __name__ == '__main__':
-	# Loading all files as training data
+	# Loading test data
 	print('Loading data...')
 	start = time.time()
 	data_test = load_test()
 	print(f'Time to load data: {time.time()-start}')
 
-	print(len(data_test))
+	# Replace with name of model you want load
+	pipeline = load_model('sgd_bigram_tfidf.joblib')
 
-	pipeline = load_model('linsvc_bigram_tfidf.joblib')
+	# Generate predictions
 	pred = pipeline.predict(data_test)
-	print(pred.shape)
-	print(pred[0])
-	predictions_to_csv(pred, 'linsvc_bigram_tfidf.csv')
+
+	# Name of csv to save predictions in
+	predictions_to_csv(pred, 'sgd_bigram_tfidf.csv')
