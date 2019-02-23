@@ -14,8 +14,8 @@ if __name__ == '__main__':
     x, y = zip(*train)
     x_v, y_v = zip(*validation)
     print(f'Time to load data: {time.time()-start}')
-
     print(f'Training with max_features: {max_features}')
+
     print('#### Training Logistic Regression ####')
     print('1. Unigram + TFIDF')
     pipeline = log_reg_pipeline(max_features, tfidf=True)

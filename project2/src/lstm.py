@@ -56,6 +56,11 @@ val_acc = history_dict['val_acc']
 loss = history_dict['loss']
 val_loss = history_dict['val_loss']
 
+print(f'Training accuracy: {acc}')
+print(f'Validation accuracy: {val_acc}')
+print(f'Training loss: {loss}')
+print(f'Validation loss: {val_loss}')
+
 epochs = range(1, len(acc) + 1)
 
 plt.plot(epochs, acc, 'bo', label='Training acc')
@@ -65,4 +70,5 @@ plt.xlabel('Epochs')
 plt.ylabel('Accuracy')
 plt.legend()
 
+plt.savefig('./history.png', dpi='figure')
 plt.show()
