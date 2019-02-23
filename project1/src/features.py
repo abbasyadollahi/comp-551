@@ -25,7 +25,7 @@ class PreprocessData:
 
     def __init__(self):
         try:
-	        os.chdir(os.path.join(os.getcwd(), 'src'))
+	        os.chdir(os.path.join(os.getcwd(), 'project1/src'))
 	        print(os.getcwd())
         except:
             pass
