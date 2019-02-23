@@ -1,14 +1,10 @@
-import os
 import re
 import json
-import time
 import math
 import numpy as np
+import os.path as op
 
-from pathlib import Path
-from itertools import chain
 from collections import Counter
-
 from nltk import download as nltk_download
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
@@ -18,18 +14,14 @@ class PreprocessData:
     NUM_TOP_WORDS = 160
     LEXICON = 'vader_lexicon'
     PUNCTUATION_REGEX = "[^\w'_]+"
-    DATA_PATH = '../data/proj1_data.json'
-    CURSE_WORDS_PATH = '../data/curse_words.txt'
-    TOP_WORDS_PATH = '../words.txt'
+
+    DATA_DIR = op.abspath(op.join(__file__, op.pardir, op.pardir, 'data'))
+    DATA_PATH = op.join(DATA_DIR, 'proj1_data.json')
+    TOP_WORDS_PATH = op.join(DATA_DIR, 'words.txt')
+    CURSE_WORDS_PATH = op.join(DATA_DIR, 'curse_words.txt')
 
 
     def __init__(self):
-        try:
-	        os.chdir(os.path.join(os.getcwd(), 'project1/src'))
-	        print(os.getcwd())
-        except:
-            pass
-
         with open(self.DATA_PATH) as f:
             data = json.load(f)
 
@@ -147,9 +139,7 @@ class PreprocessData:
 
 
     def sentiment_analysis(self, text):
-        if not os.path.exists(f'./sentiment/{self.LEXICON}.zip'):
-            nltk_download('vader_lexicon', download_dir='.')
+        if not op.exists(op.join(self.DATA_DIR, f'./sentiment/{self.LEXICON}.zip')):
+            nltk_download('vader_lexicon', download_dir=self.DATA_DIR)
 
-        sia = SentimentIntensityAnalyzer()
-        ps = sia.polarity_scores(text)
-        return ps
+        return SentimentIntensityAnalyzer().polarity_scores(text)
