@@ -81,7 +81,7 @@ if __name__ == '__main__':
 
     print('#### Training Naive Bayes ####')
     print('1. Unigram')
-    pipeline = naive_bayes_pipeline(max_features)
+    pipeline = naive_bayes_pipeline(max_features=900)
 
     start = time.time()
     pipeline.fit(x, y)

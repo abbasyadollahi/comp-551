@@ -3,11 +3,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 from keras.datasets import imdb
 from keras.models import Sequential
-from keras.layers import Dense, LSTM, Embedding, Dropout, SpatialDropout1D, GRU
+from keras.layers import Dense, LSTM, Embedding, GRU
 from keras.layers.convolutional import Conv1D, MaxPooling1D
 from keras.preprocessing.sequence import pad_sequences
 from keras.preprocessing.text import Tokenizer
 from keras.models import load_model
+from keras.utils import plot_model
 from sklearn.model_selection import train_test_split
 
 from data import load_train
@@ -22,30 +23,23 @@ X = tokenizer.texts_to_sequences(reviews)
 X = pad_sequences(X)
 print(len(X))
 
-Y = []
-for v in y:
-	if v == 0:
-		Y.append([1,0])
-	else:
-		Y.append([0,1])
-Y = np.array(Y)
-
 embed_size = 64
-lstm_size = 100
+lstm_size = 128
 batch_size = 128
-epochs = 3
+epochs = 10
 
 model = Sequential()
 model.add(Embedding(max_features, embed_size, input_length=X.shape[1]))
 model.add(Conv1D(filters=32, kernel_size=3, padding='same', activation='relu'))
 model.add(MaxPooling1D(pool_size=2))
 model.add(LSTM(units=lstm_size, dropout=0.2, recurrent_dropout=0.2))
-# model.add(GRU(units=lstm_size, dropout=0.2, recurrent_dropout=0.2))
-model.add(Dense(2, activation='sigmoid'))
+model.add(Dense(1, activation='sigmoid'))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-print(model.summary())
 
-X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3, random_state=42)
+print(model.summary())
+plot_model(model, to_file='model.png', show_shapes=True)
+
+X_train, X_test, Y_train, Y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
 start = time.time()
 history = model.fit(X_train, Y_train, epochs=epochs, batch_size=batch_size, validation_data=(X_test, Y_test))
