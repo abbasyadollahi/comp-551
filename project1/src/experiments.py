@@ -1,9 +1,5 @@
 import time
 import numpy as np
-import matplotlib.pyplot as plt
-
-from tabulate import tabulate
-from copy import deepcopy
 
 from features import PreprocessData
 from linear_regression import linear_closed_form, linear_gradient_descent

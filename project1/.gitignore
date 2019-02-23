@@ -1,6 +1,4 @@
-*.ipynb_checkpoints/
-*__pycache__/
-*sentiment/
+*data/sentiment/
 
 *words.txt
-*tempCodeRunnerFile.py
+!*curse_words.txt
