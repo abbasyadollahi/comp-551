@@ -59,7 +59,7 @@ def log_reg_pipeline(max_features, bigram=False, tfidf=False):
     vectorizer = get_vectorizer(max_features, bigram=bigram, tfidf=tfidf)
     pipeline = Pipeline([
         ('vect', vectorizer),
-        ('clf', LogisticRegression(C=1, solver='liblinear', max_iter=1000, n_jobs=-1))
+        ('clf', LogisticRegression(C=1, solver='lbfgs', max_iter=1000, n_jobs=-1))
     ])
     return pipeline
 
@@ -75,6 +75,6 @@ def sgd_pipeline(max_features, bigram=False, tfidf=False):
     vectorizer = get_vectorizer(max_features, bigram=bigram, tfidf=tfidf)
     pipeline = Pipeline([
         ('vect', vectorizer),
-        ('clf', SGDClassifier(loss='log', alpha=0.0001, max_iter=1000, tol=1e-4, n_jobs=-1))
+        ('clf', SGDClassifier(loss='hinge', alpha=0.0001, max_iter=1000, tol=1e-4, n_jobs=-1))
     ])
     return pipeline
