@@ -20,3 +20,7 @@
     --port=8888 \
     --NotebookApp.port_retries=0
     ```
+
+## Project Tasks
+
+The project tasks, experimentation and testing are found in our [Colab](https://colab.research.google.com/drive/1z6hMRneSUFx0kUpheeahfOdiArpztHEu).
