@@ -3,3 +3,5 @@ keras==2.1.6
 matplotlib==2.2.3
 numpy==1.15.1
 scikit-learn==0.20.2
+jupyter
+jupyter_http_over_ws
