@@ -1,22 +1,29 @@
 import keras
 from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten
-from keras.layers import Conv2D, MaxPooling2D
+from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D, BatchNormalization
 from keras.utils import to_categorical
-from keras.callbacks import ReduceLROnPlateau
+from keras.callbacks import ReduceLROnPlateau, EarlyStopping
+from keras.preprocessing.image import ImageDataGenerator
+from keras.optimizers import Adam, Adadelta
 from sklearn.model_selection import train_test_split
 from matplotlib import pyplot as plt
+from keras import backend as K
+import math
 
 from data import load_train
 
+print(K.tensorflow_backend._get_available_gpus())
+
 num_classes = 10
 batch_size = 128
-epochs = 10
+num_steps = 2000
+epochs = 60
 
 img_x, img_y = 64, 64
 
 train_images, train_labels = load_train()
-x_train, x_valid, y_train, y_valid = train_test_split(train_images, train_labels, test_size=0.3, random_state=42)
+x_train, x_valid, y_train, y_valid = train_test_split(train_images, train_labels, test_size=0.2, random_state=42)
+print(x_train.shape)
 
 x_train = x_train.reshape(x_train.shape[0], img_x, img_y, 1)
 x_valid = x_valid.reshape(x_valid.shape[0], img_x, img_y, 1)
@@ -35,31 +42,62 @@ print(x_train[0].shape)
 model = Sequential()
 model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(img_x, img_y, 1)))
 model.add(Conv2D(32, kernel_size=(3, 3), activation='relu'))
-model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
-model.add(Dropout(0.5))
+# model.add(BatchNormalization())
+model.add(MaxPooling2D(pool_size=(2, 2)))
+
 model.add(Conv2D(64, kernel_size=(3, 3), activation='relu'))
 model.add(Conv2D(64, kernel_size=(3, 3), activation='relu'))
-model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
-model.add(Dropout(0.5))
-model.add(Conv2D(128, kernel_size=(3, 3), activation='relu'))
-model.add(Conv2D(128, kernel_size=(3, 3), activation='relu'))
-model.add(Conv2D(128, kernel_size=(3, 3), activation='relu'))
-model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
-model.add(Dropout(0.5))
+# model.add(BatchNormalization())
+model.add(MaxPooling2D(pool_size=(2, 2)))
+
 model.add(Flatten())
-model.add(Dense(1024, activation='relu'))
-model.add(Dense(1024, activation='relu'))
+model.add(Dense(512, activation='relu'))
+# model.add(Dense(512, activation='relu'))
+# model.add(Dropout(0.5))
 model.add(Dense(num_classes, activation='softmax'))
 
-model.compile(loss=keras.losses.categorical_crossentropy, optimizer='adam', metrics=['accuracy'])
+optimizer = Adadelta()
+# optimizer = Adam()
+
+model.compile(loss=keras.losses.categorical_crossentropy, optimizer=optimizer, metrics=['accuracy'])
 print(model.summary())
 
-annealer = ReduceLROnPlateau(monitor='val_acc', patience=2, verbose=1)
+data_generator = ImageDataGenerator(rotation_range=10,
+                                    width_shift_range=0.1,
+                                    height_shift_range=0.1,
+                                    shear_range=0.2,
+                                    zoom_range=0.1)
 
-hist = model.fit(x_train, y_train, batch_size=batch_size, epochs=epochs, verbose=1, validation_data=(x_valid, y_valid), callbacks=[annealer])
+annealer = ReduceLROnPlateau(monitor='val_acc', patience=3, verbose=1, factor=0.1)
+early_stop = EarlyStopping(monitor='val_acc', patience=4, verbose=1, baseline=0.9)
+
+history = model.fit_generator(data_generator.flow(x_train, y_train, batch_size=batch_size),
+                                                steps_per_epoch=num_steps,
+                                                epochs=epochs,
+                                                verbose=1,
+                                                validation_data=(x_valid, y_valid),
+                                                callbacks=[annealer, early_stop])
+
 score = model.evaluate(x_valid, y_valid, verbose=0)
-
-model.save('./project3/cnn.h5')
 
 print(f'Validation Loss: {score[0]}')
 print(f'Validation Accuracy: {score[1]}')
+
+history_dict = history.history
+acc = history_dict['acc']
+val_acc = history_dict['val_acc']
+loss = history_dict['loss']
+val_loss = history_dict['val_loss']
+
+epcs = range(1, len(acc) + 1)
+
+plt.plot(epcs, acc, 'bo', label='Training acc')
+plt.plot(epcs, val_acc, 'b', label='Validation acc')
+plt.title('Training and validation accuracy')
+plt.xlabel('Epochs')
+plt.ylabel('Accuracy')
+plt.legend()
+plt.show()
+
+if score[1] >= 0.89:
+    model.save(f'./project3/models/cnn_{round(score[1]*100, 2)}%.h5')
