@@ -4,7 +4,7 @@
 
 PROJECT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 PROFILE = default
-PROJECT_NAME = IMDB-Sentiment-Classification
+PROJECT_NAME = Modified-MNIST
 PYTHON_INTERPRETER = python3
 
 ifeq (,$(shell which conda))
@@ -35,7 +35,7 @@ predict:
 	$(PYTHON_INTERPRETER) code/predict.py
 
 ## Set up python interpreter environment
-create_environment:
+environment:
 ifeq (True,$(HAS_CONDA))
 		@echo ">>> Detected conda, creating conda environment."
 ifeq (3,$(findstring 3,$(PYTHON_INTERPRETER)))
