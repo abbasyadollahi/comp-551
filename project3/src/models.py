@@ -14,8 +14,8 @@ from data import load_train
 print(K.tensorflow_backend._get_available_gpus())
 
 num_classes = 10
-batch_size = 512 # best 256
-num_steps = 2000 # best 2000
+batch_size = 512 # best 512
+num_steps = 4000 # best 2000
 epochs = 40
 
 img_x, img_y = 64, 64
