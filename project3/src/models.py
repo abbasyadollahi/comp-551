@@ -6,18 +6,17 @@ from keras.callbacks import ReduceLROnPlateau, EarlyStopping
 from keras.preprocessing.image import ImageDataGenerator
 from keras.optimizers import Adam, Adadelta
 from sklearn.model_selection import train_test_split
-from matplotlib import pyplot as plt
 from keras import backend as K
-import math
+from matplotlib import pyplot as plt
 
 from data import load_train
 
 print(K.tensorflow_backend._get_available_gpus())
 
 num_classes = 10
-batch_size = 128
-num_steps = 2000
-epochs = 60
+batch_size = 512 # best 256
+num_steps = 2000 # best 2000
+epochs = 40
 
 img_x, img_y = 64, 64
 
@@ -39,21 +38,23 @@ y_valid = to_categorical(y_valid, num_classes)
 print(y_train.shape)
 print(x_train[0].shape)
 
+# Best: 2 batch norm, 2 dropout, 2 fully connected, Adadelta optimizer
 model = Sequential()
 model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(img_x, img_y, 1)))
 model.add(Conv2D(32, kernel_size=(3, 3), activation='relu'))
-# model.add(BatchNormalization())
+model.add(BatchNormalization())
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
 model.add(Conv2D(64, kernel_size=(3, 3), activation='relu'))
 model.add(Conv2D(64, kernel_size=(3, 3), activation='relu'))
-# model.add(BatchNormalization())
+model.add(BatchNormalization())
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
 model.add(Flatten())
 model.add(Dense(512, activation='relu'))
-# model.add(Dense(512, activation='relu'))
-# model.add(Dropout(0.5))
+model.add(Dropout(0.5))
+model.add(Dense(512, activation='relu'))
+model.add(Dropout(0.5))
 model.add(Dense(num_classes, activation='softmax'))
 
 optimizer = Adadelta()
@@ -89,6 +90,9 @@ val_acc = history_dict['val_acc']
 loss = history_dict['loss']
 val_loss = history_dict['val_loss']
 
+if score[1] >= 0.89:
+    model.save(f'./project3/models/cnn_{round(score[1]*100, 2)}%.h5')
+
 epcs = range(1, len(acc) + 1)
 
 plt.plot(epcs, acc, 'bo', label='Training acc')
@@ -98,6 +102,3 @@ plt.xlabel('Epochs')
 plt.ylabel('Accuracy')
 plt.legend()
 plt.show()
-
-if score[1] >= 0.89:
-    model.save(f'./project3/models/cnn_{round(score[1]*100, 2)}%.h5')
