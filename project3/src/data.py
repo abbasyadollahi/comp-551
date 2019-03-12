@@ -1,3 +1,4 @@
+from pandas import DataFrame
 import numpy as np
 import pandas as pd
 import os
@@ -5,6 +6,7 @@ import os.path as op
 import matplotlib.pyplot as plt
 
 DATA_DIR = op.abspath(op.join(__file__, op.pardir, op.pardir, 'data'))
+RESULT_DIR = op.abspath(op.join(__file__, op.pardir, op.pardir, 'results'))
 
 def load_train():
     train_images = pd.read_pickle(op.join(DATA_DIR, 'train_images.pkl'))
@@ -14,9 +16,8 @@ def load_train():
 def load_test():
     return pd.read_pickle(op.join(DATA_DIR, 'test_images.pkl'))
 
-# train, csv = load_train()
-# test = load_test()
-# import cv2
-# cv2.imwrite('gang.jpg', train[0])
-# plt.imshow(train[0], cmap='gray')
-# plt.show()
+def predictions_to_csv(pred, filename):
+    if not op.isdir(RESULT_DIR):
+        os.makedirs(RESULT_DIR)
+    df = DataFrame(pred)
+    df.to_csv(op.join(RESULT_DIR, filename), index_label=['Id', 'Category'])
