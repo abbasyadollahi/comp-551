@@ -7,7 +7,7 @@ from keras.callbacks import ReduceLROnPlateau
 from sklearn.model_selection import train_test_split
 from matplotlib import pyplot as plt
 
-from data import get_train_data
+from data import load_train
 
 num_classes = 10
 batch_size = 128
@@ -15,7 +15,7 @@ epochs = 10
 
 img_x, img_y = 64, 64
 
-train_images, train_labels = get_train_data()
+train_images, train_labels = load_train()
 x_train, x_valid, y_train, y_valid = train_test_split(train_images, train_labels, test_size=0.3, random_state=42)
 
 x_train = x_train.reshape(x_train.shape[0], img_x, img_y, 1)
