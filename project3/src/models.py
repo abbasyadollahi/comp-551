@@ -37,17 +37,21 @@ print(x_train[0].shape)
 # Best: Ghetto vgg10 (half layer dimensions), Nadam optimizer
 model = Sequential()
 model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(img_x, img_y, 1)))
+model.add(BatchNormalization())
 model.add(Conv2D(32, kernel_size=(3, 3), activation='relu'))
 model.add(BatchNormalization())
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
 model.add(Conv2D(64, kernel_size=(3, 3), activation='relu'))
+model.add(BatchNormalization())
 model.add(Conv2D(64, kernel_size=(3, 3), activation='relu'))
 model.add(BatchNormalization())
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
 model.add(Conv2D(128, kernel_size=(3, 3), activation='relu'))
+model.add(BatchNormalization())
 model.add(Conv2D(128, kernel_size=(3, 3), activation='relu'))
+model.add(BatchNormalization())
 model.add(Conv2D(128, kernel_size=(3, 3), activation='relu'))
 model.add(BatchNormalization())
 model.add(MaxPooling2D(pool_size=(2, 2)))
@@ -66,16 +70,17 @@ optimizer = Nadam()
 model.compile(loss=keras.losses.categorical_crossentropy, optimizer=optimizer, metrics=['accuracy'])
 print(model.summary())
 
-batch_size = 64  # best 64
-num_steps = x_train.shape[0] // batch_size
+batch_size = 256  # best 64
+# num_steps = x_train.shape[0] // batch_size
+num_steps = 1000
 epochs = 200
 
 data_generator = ImageDataGenerator(
-    rotation_range=10,
+    rotation_range=12,
     width_shift_range=0.1,
     height_shift_range=0.1,
     shear_range=1,
-    zoom_range=0.10)
+    zoom_range=0.12)
 
 annealer = ReduceLROnPlateau(monitor='val_acc', patience=3, verbose=1, factor=0.5)
 early_stop = EarlyStopping(monitor='val_acc', patience=10, verbose=1)
@@ -104,7 +109,7 @@ val_acc = history_dict['val_acc']
 loss = history_dict['loss']
 val_loss = history_dict['val_loss']
 
-if score[1] >= 0.93:
+if score[1] >= 0.96:
     model.save(f'./project3/models/cnn_{round(score[1]*100, 2)}%.h5')
 else:
     print('Model did not exceed baseline validation accuracy, not saving.')
