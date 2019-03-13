@@ -10,17 +10,18 @@ from keras.datasets import mnist
 
 PROJECT_DIR = Path(__file__).resolve().parents[1]
 RESULT_DIR = PROJECT_DIR / 'results'
+SRC_DIR = PROJECT_DIR / 'src'
 DATA_DIR = PROJECT_DIR / 'data'
 PROCESSED_DIR = DATA_DIR / 'processed'
 
 def main():
-    logger = logging.getLogger(__name__)
-    logger.info('preprocessing data')
-
     """
     Generate and save MNIST images and labels to train
     "You Only Look Once" (YOLO) object detection system
     """
+    logger = logging.getLogger(__name__)
+    logger.info('preprocessing data')
+
     generate_mnist()
 
 def generate_mnist():
@@ -32,8 +33,37 @@ def generate_mnist():
                  '"You Only Look Once" (YOLO) object detection system'))
 
     (X_train, y_train), (X_test, y_test) = mnist.load_data()
+
+    write_config() # Write config files for YOLO training
     save_mnist_set(X_train, y_train, set_name='train')
     save_mnist_set(X_test, y_test, set_name='test')
+
+def write_config():
+    """
+    Write .data and .names config files for YOLO training
+    """
+    logger = logging.getLogger(__name__)
+    logger.info(('writing config files for YOLO training'))
+
+    mnist_dir = PROCESSED_DIR / 'mnist'
+    cfg_dir = SRC_DIR / 'cfg'
+    config = ('classes = 10\n'
+                f'train = {mnist_dir}/train.txt\n'
+                f'valid = {mnist_dir}/test.txt\n'
+                f'names = {mnist_dir}/voc-mnist.names\n'
+                f'backup = {PROJECT_DIR}/models')
+
+    # Create directories if don't exist already
+    make_directory(cfg_dir)
+    make_directory(mnist_dir)
+
+    logger.info('writing voc-mnist.data')
+    with open(cfg_dir / 'voc-mnist.data', 'w') as fout:
+        fout.write(config)
+
+    logger.info('writing voc-mnist.names')
+    with open(mnist_dir / 'voc-mnist.names', 'w') as fout:
+        fout.write('\n'.join(f'{i}' for i in range(10))) # Write 0-9
 
 def save_mnist_set(X, y, set_name):
     """
@@ -41,10 +71,11 @@ def save_mnist_set(X, y, set_name):
     "You Only Look Once" (YOLO) object detection system
     """
     logger = logging.getLogger(__name__)
-    dataset_path = PROCESSED_DIR / f'mnist/{set_name}'
+    mnist_dir = PROCESSED_DIR / 'mnist'
+    dataset_dir = mnist_dir / set_name
 
-    make_directory(dataset_path / 'img')
-    make_directory(dataset_path / 'labels')
+    make_directory(dataset_dir / 'img')
+    make_directory(dataset_dir / 'labels')
 
     for i, x in enumerate(X):
         filename = f'{i:05d}'
@@ -53,16 +84,16 @@ def save_mnist_set(X, y, set_name):
 
         # Write image file
         logger.info(f'saving img/{filename}.jpg')
-        image_path = dataset_path / f'img/{filename}.jpg'
+        image_path = dataset_dir / f'img/{filename}.jpg'
         image.save(image_path)
 
         # Write label file
         logger.info(f'saving labels/{filename}.txt')
-        with open(dataset_path / f'labels/{filename}.txt', 'w') as fout:
+        with open(dataset_dir / f'labels/{filename}.txt', 'w') as fout:
             fout.write(label)
 
         # Write list file (for YOLO training)
-        with open(dataset_path / f'{set_name}.txt', 'a') as fout:
+        with open(mnist_dir / f'{set_name}.txt', 'a') as fout:
             fout.write(f'{image_path}\n')
 
 def get_image_box_pair(x):
