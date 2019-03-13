@@ -27,7 +27,7 @@ data: requirements
 	$(PYTHON_INTERPRETER) src/data.py
 
 ## Train and save models
-train: data
+train:
 	$(PYTHON_INTERPRETER) src/train.py
 
 ## Predict with all built models

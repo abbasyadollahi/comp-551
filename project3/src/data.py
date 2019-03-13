@@ -1,8 +1,9 @@
+# -*- coding: utf-8 -*-
 import os
 import logging
 import numpy as np
 import pandas as pd
-#import os.path as op
+import os.path as op
 from PIL import Image, ImageOps
 from pathlib import Path
 from pandas import DataFrame
@@ -12,6 +13,7 @@ PROJECT_DIR = Path(__file__).resolve().parents[1]
 RESULT_DIR = PROJECT_DIR / 'results'
 SRC_DIR = PROJECT_DIR / 'src'
 DATA_DIR = PROJECT_DIR / 'data'
+RAW_DIR = DATA_DIR / 'raw'
 PROCESSED_DIR = DATA_DIR / 'processed'
 
 def main():
@@ -137,16 +139,14 @@ def get_label(digit_label, image, box):
     """
     MNIST digit label to train "You Only Look Once" (YOLO) object detection system
     """
-    dw = 1 / image.width
-    dh = 1 / image.height
     x = (box['left'] + box['right']) / 2
     y = (box['top'] + box['bottom']) / 2
     w = box['right'] - box['left']
     h = box['bottom'] - box['top']
-    x *= dw
-    w *= dw
-    y *= dh
-    h *= dh
+    x /= image.width
+    w /= image.width
+    y /= image.height
+    h /= image.height
     return f'{digit_label:d}, {x:f}, {y:f}, {w:f}, {h:f}'
 
 def make_directory(path):
@@ -155,6 +155,12 @@ def make_directory(path):
     """
     if not os.path.isdir(path):
         os.makedirs(path)
+
+def get_dataset(path):
+    return pd.read_pickle(path)
+
+def get_csv(path):
+    return pd.read_csv(path).to_numpy()[:, 1]
 
 def load_train():
     train_images = pd.read_pickle(op.join(DATA_DIR, 'train_images.pkl'))
