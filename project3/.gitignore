@@ -20,5 +20,3 @@ __pycache__/
 
 # Data
 *.pkl
-*.jpg
-*.txt
