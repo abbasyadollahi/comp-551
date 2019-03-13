@@ -24,15 +24,15 @@ requirements: test_environment
 
 ## Make Dataset
 data: requirements
-	$(PYTHON_INTERPRETER) code/data.py
+	$(PYTHON_INTERPRETER) src/data.py
 
 ## Train and save models
-train: data
-	$(PYTHON_INTERPRETER) code/train.py
+train:
+	$(PYTHON_INTERPRETER) src/train.py
 
 ## Predict with all built models
 predict:
-	$(PYTHON_INTERPRETER) code/predict.py
+	$(PYTHON_INTERPRETER) src/predict.py
 
 ## Set up python interpreter environment
 environment:
