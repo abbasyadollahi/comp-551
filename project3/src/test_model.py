@@ -9,8 +9,8 @@ import matplotlib.pyplot as plt
 
 from data import load_train, load_test, predictions_to_csv
 
-model_name = 'cnn_97.01%'
-model = load_model(f'./project3/models/{model_name}.h5')
+model_name = 'cnn_97.01%_overfit'
+model = load_model(f'./project3/trained_models/{model_name}.h5')
 
 print(model.summary())
 
