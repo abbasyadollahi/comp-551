@@ -3,7 +3,7 @@ from keras.models import Sequential, load_model
 from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D, BatchNormalization
 from keras.preprocessing.image import ImageDataGenerator
 
-class VGG10():
+class VGG():
     def __init__(self, input_shape, num_classes, optimizer):
         self.model = Sequential()
         self.model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=input_shape))

@@ -10,7 +10,7 @@ from keras import backend as K
 from matplotlib import pyplot as plt
 
 from data import load_train
-from cnn_vgg10 import VGG10
+from models.cnn_vgg import VGG
 
 print(K.tensorflow_backend._get_available_gpus())
 
@@ -35,12 +35,12 @@ y_valid = to_categorical(y_valid, num_classes)
 print(y_train.shape)
 print(x_train[0].shape)
 
-# Best: Ghetto vgg10 (half layer dimensions), Nadam optimizer
-optimizer = Adadelta()
-# optimizer = Adam()
+# Best: Ghetto vgg10 (half layer dimensions), Adam optimizer
+# optimizer = Adadelta()
+optimizer = Adam()
 # optimizer = Nadam()
 
-batch_size = 64  # best 64
+batch_size = 64
 num_steps = 'auto'
 # num_steps = 1000
 epochs = 200
@@ -48,12 +48,12 @@ epochs = 200
 annealer = ReduceLROnPlateau(monitor='val_acc', patience=3, verbose=1, factor=0.5)
 early_stop = EarlyStopping(monitor='val_acc', patience=10, verbose=1)
 checkpoint = ModelCheckpoint(
-    filepath=f'./project3/models/checkpoints/cnn_steps={num_steps}_batch={batch_size}.h5',
+    filepath=f'./project3/trained_models/checkpoints/cnn_steps={num_steps}_batch={batch_size}.h5',
     verbose=1,
     monitor='val_acc',
     save_best_only=True)
 
-model = VGG10(input_shape=(img_x, img_y, 1), num_classes=num_classes, optimizer=optimizer)
+model = VGG(input_shape=(img_x, img_y, 1), num_classes=num_classes, optimizer=optimizer)
 
 history = model.train(
     x_train, y_train,
