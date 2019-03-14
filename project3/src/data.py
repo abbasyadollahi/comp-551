@@ -6,7 +6,6 @@ import pandas as pd
 import os.path as op
 from PIL import Image, ImageOps
 from pathlib import Path
-from pandas import DataFrame
 from keras.datasets import mnist
 
 PROJECT_DIR = Path(__file__).resolve().parents[1]
@@ -173,8 +172,9 @@ def load_test():
 def predictions_to_csv(pred, filename):
     if not op.isdir(RESULT_DIR):
         os.makedirs(RESULT_DIR)
-    df = DataFrame(pred)
-    df.to_csv(op.join(RESULT_DIR, filename), index_label=['Id', 'Category'])
+    res = pd.Series(pred, name='Category')
+    submission = pd.concat([pd.Series(range(1, res.shape[0]+1), name='Id'), res], axis=1)
+    submission.to_csv(op.join(RESULT_DIR, filename), index=False)
 
 if __name__ == '__main__':
     log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
