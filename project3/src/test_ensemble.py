@@ -1,4 +1,4 @@
-from keras.models import load_model
+from keras.models import load_model, Input
 from keras.utils import to_categorical, plot_model
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, confusion_matrix
@@ -7,13 +7,22 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+from models.cnn_ensemble import Ensemble
 from data import load_train, load_test, predictions_to_csv
 
-model_name = 'cnn_97.01%_overfit'
-model = load_model(f'./project3/trained_models/{model_name}.h5')
+model_names = ['cnn_ens1_96.02%', 'cnn_ens2_96.2%', 'cnn_ens3_96.45%']
+models = []
+for i, name in enumerate(model_names):
+    model = load_model(f'./project3/trained_models/{name}.h5')
+    model.name = f'ensemble_{i+1}'
+    models.append(model)
+
+model_input = Input(shape=(64, 64, 1))
+model = Ensemble(models, model_input)
+model_name = 'ensemble'
 
 print(model.summary())
-plot_model(model, to_file=f'./project3/figures/{model_name}_arch.png', show_shapes=True)
+plot_model(model.model, to_file=f'./project3/figures/{model_name}_arch.png', show_shapes=True)
 
 num_classes = 10
 img_x, img_y = 64, 64
@@ -37,24 +46,10 @@ print('Test dim: ', x_test.shape)
 
 y_valid = to_categorical(y_valid, num_classes)
 
-# Generate classification report for validation set
-np.set_printoptions(precision=3)
-pred = model.predict_classes(x_valid)
-names = [f'{i}' for i in range(10)]
-print('Classification Report')
-print(classification_report(np.argmax(y_valid, axis=1), pred, target_names=names, digits=3))
+# score = model.evaluate(x_valid, y_valid)
 
-# Generate confusion matrix for validation set
-cnf_matrix = confusion_matrix(np.argmax(y_valid, axis=1), pred)
-sns.heatmap(cnf_matrix, annot=True, fmt='d')
-plt.ylabel('True label')
-plt.xlabel('Predicted label')
-plt.savefig(f'./project3/figures/{model_name}_cnf.png')
-
-score = model.evaluate(x_valid, y_valid)
-
-print(f'Validation Loss: {score[0]}')
-print(f'Validation Accuracy: {score[1]}')
+# print(f'Validation Loss: {score[0]}')
+# print(f'Validation Accuracy: {score[1]}')
 
 # Generate test labels
 y_test = model.predict(x_test)

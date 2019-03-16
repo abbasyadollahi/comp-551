@@ -20,7 +20,7 @@ img_x, img_y = 64, 64
 
 # Load training data
 train_images, train_labels = load_train()
-x_train, x_valid, y_train, y_valid = train_test_split(train_images, train_labels, test_size=0.2, random_state=42, stratify=train_labels)
+x_train, x_valid, y_train, y_valid = train_test_split(train_images, train_labels, test_size=0.2, stratify=train_labels)
 
 # Reshape and normalize images
 x_train = x_train.reshape(x_train.shape[0], img_x, img_y, 1)
@@ -49,7 +49,7 @@ optimizer = Adam()
 batch_size = 64
 num_steps = 'auto'
 # num_steps = 1000
-epochs = 200
+epochs = 100
 
 # Callbacks
 annealer = ReduceLROnPlateau(monitor='val_acc', patience=3, verbose=1, factor=0.5)
@@ -81,10 +81,10 @@ history_dict = history.history
 acc = history_dict['acc']
 val_acc = history_dict['val_acc']
 
-if score[1] >= 0.97:
-    model.save(f'./project3/trained_models/cnn_{round(score[1]*100, 2)}%.h5')
-else:
-    print('Model did not exceed baseline validation accuracy, not saving.')
+# if score[1] >= 0.97:
+model.save(f'./project3/trained_models/cnn_{round(score[1]*100, 2)}%.h5')
+# else:
+#     print('Model did not exceed baseline validation accuracy, not saving.')
 
 epcs = range(1, len(acc) + 1)
 plt.plot(epcs, acc, 'bo', label='Training acc')

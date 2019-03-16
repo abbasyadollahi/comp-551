@@ -173,7 +173,7 @@ def predictions_to_csv(pred, filename):
     if not op.isdir(RESULT_DIR):
         os.makedirs(RESULT_DIR)
     res = pd.Series(pred, name='Category')
-    submission = pd.concat([pd.Series(range(1, res.shape[0]+1), name='Id'), res], axis=1)
+    submission = pd.concat([pd.Series(range(0, res.shape[0]), name='Id'), res], axis=1)
     submission.to_csv(op.join(RESULT_DIR, filename), index=False)
 
 if __name__ == '__main__':
