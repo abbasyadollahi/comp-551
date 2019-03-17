@@ -10,7 +10,8 @@ import matplotlib.pyplot as plt
 from models.cnn_ensemble import Ensemble
 from data import load_train, load_test, predictions_to_csv
 
-model_names = ['cnn_ens1_96.02%', 'cnn_ens2_96.2%', 'cnn_ens3_96.45%']
+model_names = ['cnn_ens1_96.02%', 'cnn_ens2_96.2%', 'cnn_ens3_96.45%', 'cnn_ens4_96.76%', 'cnn_ens5_96.72%',
+'cnn_ens6_96.51%', 'cnn_ens7_96.15%', 'cnn_ens8_96.29%', 'cnn_ens9_96.34%', 'cnn_ens10_96.26%']
 models = []
 for i, name in enumerate(model_names):
     model = load_model(f'./project3/trained_models/{name}.h5')
@@ -22,7 +23,7 @@ model = Ensemble(models, model_input)
 model_name = 'ensemble'
 
 print(model.summary())
-plot_model(model.model, to_file=f'./project3/figures/{model_name}_arch.png', show_shapes=True)
+plot_model(model.model, to_file=f'./project3/figures/{model_name}{len(model_names)}_arch.png', show_shapes=True)
 
 num_classes = 10
 img_x, img_y = 64, 64
@@ -44,12 +45,16 @@ x_test = x_test.astype('float32')
 x_test /= 255.
 print('Test dim: ', x_test.shape)
 
-y_valid = to_categorical(y_valid, num_classes)
+# Compute validation accuracy
+y_val_pred = model.predict(x_valid)
+y_val_pred = np.argmax(y_val_pred, axis=1)
+print(y_val_pred.shape)
 
-# score = model.evaluate(x_valid, y_valid)
-
-# print(f'Validation Loss: {score[0]}')
-# print(f'Validation Accuracy: {score[1]}')
+num_correct = 0
+for y, y_pred in zip(y_valid, y_val_pred):
+    if y == y_pred:
+        num_correct += 1
+print('Validation Accuracy: ', num_correct/y_valid.shape[0])
 
 # Generate test labels
 y_test = model.predict(x_test)
