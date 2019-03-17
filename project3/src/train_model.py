@@ -20,7 +20,7 @@ img_x, img_y = 64, 64
 
 # Load training data
 train_images, train_labels = load_train()
-x_train, x_valid, y_train, y_valid = train_test_split(train_images, train_labels, test_size=0.2, stratify=train_labels)
+x_train, x_valid, y_train, y_valid = train_test_split(train_images, train_labels, test_size=0.2, random_state=42, stratify=train_labels)
 
 # Reshape and normalize images
 x_train = x_train.reshape(x_train.shape[0], img_x, img_y, 1)
