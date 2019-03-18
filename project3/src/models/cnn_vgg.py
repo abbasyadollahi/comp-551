@@ -29,8 +29,6 @@ class VGG():
         self.model.add(Flatten())
         self.model.add(Dense(1024, activation='relu'))
         self.model.add(Dropout(0.5))
-        # self.model.add(Dense(1024, activation='relu'))
-        # self.model.add(Dropout(0.5))
         self.model.add(Dense(num_classes, activation='softmax'))
 
         self.model.compile(loss=keras.losses.categorical_crossentropy, optimizer=optimizer, metrics=['accuracy'])

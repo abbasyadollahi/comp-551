@@ -10,8 +10,12 @@ import matplotlib.pyplot as plt
 from models.cnn_ensemble import Ensemble
 from data import load_train, load_test, predictions_to_csv
 
+# model_names = ['cnn_ens1_96.02%', 'cnn_ens2_96.2%', 'cnn_ens3_96.45%']
+# model_names = ['cnn_ens1_96.02%', 'cnn_ens2_96.2%', 'cnn_ens3_96.45%', 'cnn_ens4_96.76%', 'cnn_ens5_96.72%',
+#                'cnn_ens6_96.51%']
 model_names = ['cnn_ens1_96.02%', 'cnn_ens2_96.2%', 'cnn_ens3_96.45%', 'cnn_ens4_96.76%', 'cnn_ens5_96.72%',
 'cnn_ens6_96.51%', 'cnn_ens7_96.15%', 'cnn_ens8_96.29%', 'cnn_ens9_96.34%', 'cnn_ens10_96.26%']
+
 models = []
 for i, name in enumerate(model_names):
     model = load_model(f'./project3/trained_models/{name}.h5')

@@ -1,7 +1,7 @@
 import keras
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D, BatchNormalization
-from keras.utils import to_categorical
+from keras.utils import to_categorical, plot_model
 from keras.callbacks import ReduceLROnPlateau, EarlyStopping, ModelCheckpoint
 from keras.preprocessing.image import ImageDataGenerator
 from keras.optimizers import Adam, Adadelta, Nadam
@@ -50,17 +50,19 @@ batch_size = 64
 num_steps = 'auto'
 # num_steps = 1000
 epochs = 100
+model_name = 'VGG9'
 
 # Callbacks
 annealer = ReduceLROnPlateau(monitor='val_acc', patience=3, verbose=1, factor=0.5)
 early_stop = EarlyStopping(monitor='val_acc', patience=10, verbose=1)
 checkpoint = ModelCheckpoint(
-    filepath=f'./project3/trained_models/checkpoints/cnn_steps={num_steps}_batch={batch_size}.h5',
+    filepath=f'./project3/trained_models/checkpoints/{model_name}_steps={num_steps}_batch={batch_size}.h5',
     verbose=1,
     monitor='val_acc',
     save_best_only=True)
 
 model = VGG(input_shape=(img_x, img_y, 1), num_classes=num_classes, optimizer=optimizer)
+plot_model(model.model, to_file=f'./project3/figures/{model_name}_arch.png', show_shapes=True)
 
 history = model.train(
     x_train, y_train,
@@ -81,10 +83,10 @@ history_dict = history.history
 acc = history_dict['acc']
 val_acc = history_dict['val_acc']
 
-# if score[1] >= 0.97:
-model.save(f'./project3/trained_models/cnn_{round(score[1]*100, 2)}%.h5')
-# else:
-#     print('Model did not exceed baseline validation accuracy, not saving.')
+if score[1] >= 0.97:
+    model.save(f'./project3/trained_models/{model_name}_{round(score[1]*100, 2)}%.h5')
+else:
+    print('Model did not exceed baseline validation accuracy, not saving.')
 
 epcs = range(1, len(acc) + 1)
 plt.plot(epcs, acc, 'bo', label='Training acc')
@@ -93,5 +95,5 @@ plt.title('Training and validation accuracy')
 plt.xlabel('Epochs')
 plt.ylabel('Accuracy')
 plt.legend()
-plt.savefig(f'./project3/figures/cnn_{round(score[1]*100, 2)}%.png')
+plt.savefig(f'./project3/figures/{model_name}_{round(score[1]*100, 2)}%.png')
 plt.show()
