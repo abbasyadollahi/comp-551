@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
 import logging
-import numpy as np
 import pandas as pd
 import os.path as op
 from PIL import Image, ImageOps

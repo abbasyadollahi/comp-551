@@ -3,11 +3,7 @@
 Classifying images from a modified MNIST dataset. Each image contains multiple digits.
 Goal is to find largest digit and predict its label between 0 and 9.
 
-## Requirements
-
-- Python 3.7
-
-- Run `pip install -r requirements.txt` from the project directory to install all dependencies.
+See `requirements.txt` for required packages.
 
 ## Models
 

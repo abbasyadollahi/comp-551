@@ -1,7 +1,7 @@
 from keras.models import load_model, Input
-from keras.utils import to_categorical, plot_model
+from keras.utils import plot_model
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import classification_report
 import itertools
 import numpy as np
 import seaborn as sns
