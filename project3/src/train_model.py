@@ -1,10 +1,6 @@
-import keras
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D, BatchNormalization
 from keras.utils import to_categorical, plot_model
 from keras.callbacks import ReduceLROnPlateau, EarlyStopping, ModelCheckpoint
-from keras.preprocessing.image import ImageDataGenerator
-from keras.optimizers import Adam, Adadelta, Nadam
+from keras.optimizers import Adam, Adadelta
 from sklearn.model_selection import train_test_split
 from keras import backend as K
 from matplotlib import pyplot as plt

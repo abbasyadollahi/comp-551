@@ -1,11 +1,10 @@
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
 from keras.models import load_model
 from keras.utils import to_categorical, plot_model
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, confusion_matrix
-import itertools
-import numpy as np
-import seaborn as sns
-import matplotlib.pyplot as plt
 
 from data import load_train, load_test, predictions_to_csv
 

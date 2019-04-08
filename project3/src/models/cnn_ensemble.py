@@ -1,4 +1,4 @@
-from keras.models import Model, Input
+from keras.models import Model
 from keras.layers import average
 
 class Ensemble():
