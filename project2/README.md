@@ -1,6 +1,6 @@
 # Project 2
 
-Classifying IMBD reviews as positive or negative.
+Classifying reviews from an IMBD [dataset](https://www.kaggle.com/c/comp-551-imbd-sentiment-classification/data) as positive or negative.
 
 See `requirements.txt` for required packages.
 

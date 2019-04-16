@@ -1,23 +1,5 @@
 *trained_models/
 *results/
-*data/raw/
 *models/
 
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-
-# Pycharm
-.idea
-
-# VS Code
-.vscode/
-
-# Spyder
-.spyproject/
-
-# Jupyter NB Checkpoints
-.ipynb_checkpoints/
-
-# Data
 *.pkl

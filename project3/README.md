@@ -1,6 +1,6 @@
 # Project 3
 
-Classifying images from a modified MNIST dataset. Each image contains multiple digits.
+Classifying images from a modified MNIST [dataset](https://www.kaggle.com/c/comp-551-w2019-project-3-modified-mnist/data). Each image contains multiple digits.
 Goal is to find largest digit and predict its label between 0 and 9.
 
 See `requirements.txt` for required packages.
