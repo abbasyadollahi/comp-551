@@ -2,7 +2,7 @@ import os
 import os.path as op
 from pandas import DataFrame, read_pickle
 
-DATA_DIR = op.abspath(op.join(__file__, op.pardir, 'data'))
+DATA_DIR = op.abspath(op.join(__file__, op.pardir, op.pardir, 'data'))
 
 def load_data(filename):
 	df = read_pickle(op.join(DATA_DIR, filename))
