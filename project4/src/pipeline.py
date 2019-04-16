@@ -17,7 +17,6 @@ class LemmaTokenizer:
         self.wnl = WordNetLemmatizer()
         self.stop_words = set(stopwords.words('english'))
         self.stop_words.update(['&', "'", "''", '``', '(', ')', ',', ':', ';'])
-        self.sentiment_strength = load_sentiment_strength()
 
     def __call__(self, doc):
         tokens = word_tokenize(doc)
@@ -36,11 +35,9 @@ class LemmaTokenizer:
         return tags.get(tag, wn.NOUN)
 
 def get_vectorizer(max_features, binary=False, bigram=False, tfidf=False):
-    vectorizer = CountVectorizer(
-        tokenizer=LemmaTokenizer(), max_df=0.5, max_features=max_features)
+    vectorizer = CountVectorizer(tokenizer=LemmaTokenizer(), max_df=0.5, max_features=max_features)
     if tfidf:
-        vectorizer = TfidfVectorizer(tokenizer=LemmaTokenizer(
-        ), max_df=0.5, max_features=max_features, norm='l2')
+        vectorizer = TfidfVectorizer(tokenizer=LemmaTokenizer(), max_df=0.5, max_features=max_features, norm='l2')
     if binary:
         vectorizer.set_params(binary=True)
     if bigram:
