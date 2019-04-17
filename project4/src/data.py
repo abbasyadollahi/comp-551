@@ -16,15 +16,17 @@ def load_data(filename):
     test_data = []
     test_labels = []
     for idx, row in df.iterrows():
+        split = row['split']
         sentence = clean_sentence(row['sentence'])
         label = row['label']
-        if row['split'] == 'train':
+
+        if split == 'train':
             train_data.append(sentence)
             train_labels.append(label)
-        elif row['split'] == 'dev':
+        elif split == 'dev':
             dev_data.append(sentence)
             dev_labels.append(label)
-        elif row['split'] == 'test':
+        elif split == 'test':
             test_data.append(sentence)
             test_labels.append(label)
         else:
