@@ -13,14 +13,13 @@ def execute_pipeline(title, pipeline, x, y, x_v, y_v, x_t, y_t):
     print(f'Training time: {train_time-start}')
     print(f'Training accuracy: {pipeline.score(x, y)}')
     print(f'Validation accuracy: {pipeline.score(x_v, y_v)}')
-    # print(f'Test accuracy: {pipeline.score(x_t, y_t)}')
+    print(f'Test accuracy: {pipeline.score(x_t, y_t)}')
     print(f'Scoring time: {time.time()-train_time}s')
 
 if __name__ == '__main__':
     print('Loading data...')
     start = time.time()
     mr_data, mr_labels = load_mr()
-    # mr_train_data, mr_dev_data, mr_train_labels, mr_dev_labels = train_test_split(mr_data, mr_labels, test_size=0.3, random_state=42)
     sst_train_data, sst_train_labels, sst_dev_data, sst_dev_labels, sst_test_data, sst_test_labels = load_sst2()
     print(f'Time to load data: {time.time()-start}s')
 

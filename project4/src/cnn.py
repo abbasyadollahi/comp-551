@@ -1,8 +1,10 @@
 import numpy as np
+from sklearn.model_selection import train_test_split
 from keras.models import Model
 from keras.layers import Conv1D, MaxPooling1D, Embedding, Dropout, Dense, concatenate, Flatten, Input
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
+from keras.utils import plot_model
 from matplotlib import pyplot as plt
 
 from data import load_mr, load_sst2
@@ -19,11 +21,13 @@ def get_conv_pool(x_input, n_grams=[3, 4, 5], feature_maps=100):
 mr_data, mr_labels = load_mr()
 sst_train_data, sst_train_labels, sst_dev_data, sst_dev_labels, sst_test_data, sst_test_labels = load_sst2()
 
-tokenizer = Tokenizer(num_words=5000)
-tokenizer.fit_on_texts(sst_train_data)
+mr_data_train, mr_data_test, mr_labels_train, mr_labels_test = train_test_split(mr_data, mr_labels, test_size=0.1, random_state=42)
 
-X_train = tokenizer.texts_to_sequences(sst_train_data)
-X_test = tokenizer.texts_to_sequences(sst_dev_data)
+tokenizer = Tokenizer(num_words=None)
+tokenizer.fit_on_texts(mr_data_train)
+
+X_train = tokenizer.texts_to_sequences(mr_data_train)
+X_test = tokenizer.texts_to_sequences(mr_data_test)
 
 num_words = len(tokenizer.word_index) + 1
 
@@ -45,12 +49,18 @@ fc = Dense(1, activation='sigmoid')(concat)
 model = Model(inputs=i, outputs=fc)
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 model.summary()
+plot_model(model, to_file='./project4/cnn_arch.png', show_shapes=True)
 
-history = model.fit(X_train, sst_train_labels, epochs=10, verbose=1, validation_data=(X_test, sst_dev_labels), batch_size=50)
-loss, accuracy = model.evaluate(X_train, sst_train_labels)
+history = model.fit(X_train, mr_labels_train, epochs=7, verbose=1, validation_data=(X_test, mr_labels_test), batch_size=50)
+loss, accuracy = model.evaluate(X_train, mr_labels_train)
 print(f'Training accuracy: {accuracy}')
-loss, accuracy = model.evaluate(X_test, sst_dev_labels)
+loss, accuracy = model.evaluate(X_test, mr_labels_test)
 print(f'Validation accuracy: {accuracy}')
+
+# X_test = tokenizer.texts_to_sequences(sst_test_data)
+# X_test = pad_sequences(X_test, padding='post', maxlen=max_len)
+# loss, accuracy = model.evaluate(X_test, sst_test_labels)
+# print(f'Test accuracy: {accuracy}')
 
 history_dict = history.history
 acc = history_dict['acc']
