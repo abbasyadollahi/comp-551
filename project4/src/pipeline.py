@@ -22,8 +22,8 @@ class LemmaTokenizer:
         return tokens
         # return [self.wnl.lemmatize(t) for t in tokens]
 
-def get_vectorizer(max_features, ngram=1, tfidf=False):
-    vectorizer = CountVectorizer(tokenizer=LemmaTokenizer(), max_features=max_features, ngram_range=(1, ngram))
+def get_vectorizer(max_features=None, binary=False, ngram=1, tfidf=False):
+    vectorizer = CountVectorizer(tokenizer=LemmaTokenizer(), max_features=max_features, binary=binary, ngram_range=(1, ngram))
     if tfidf:
         vectorizer = TfidfVectorizer(tokenizer=LemmaTokenizer(), max_features=max_features, ngram_range=(1, ngram), norm='l2')
     return vectorizer
