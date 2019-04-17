@@ -5,6 +5,8 @@ from sklearn.model_selection import train_test_split, cross_val_score, cross_val
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import StratifiedKFold
 from sklearn.datasets import load_files
+from keras.utils import plot_model
+from matplotlib import pyplot as plt
 
 from data import load_mr, load_sst2
 from nbsvm import get_nbsvm_model
@@ -66,8 +68,22 @@ if __name__ == '__main__':
     x_dev, y_dev = x_sst[sst_train_len:sst_train_len+sst_dev_len], sst_labels[sst_train_len:sst_train_len+sst_dev_len]
     x_test, y_test = x_sst[sst_train_len+sst_dev_len:sst_train_len+sst_dev_len+sst_test_len], sst_labels[sst_train_len+sst_dev_len:sst_train_len+sst_dev_len+sst_test_len]
     model = get_nbsvm_model(num_words, nb_ratios=nb_ratios)
-    model.fit(x_train, y_train, validation_data=(x_dev, y_dev), batch_size=16, epochs=5)
+    history = model.fit(x_train, y_train, validation_data=(x_dev, y_dev), batch_size=16, epochs=5)
+    _, accuracy = model.evaluate(x_test, y_test)
+    print(accuracy)
+    plot_model(model, to_file='./project4/nbsvm_arch.png', show_shapes=True)
 
+    history_dict = history.history
+    acc = history_dict['acc']
+    val_acc = history_dict['val_acc']
+    epcs = range(1, len(acc) + 1)
+    plt.plot(epcs, acc, 'bo', label='Training acc')
+    plt.plot(epcs, val_acc, 'b', label='Validation acc')
+    plt.title('Training and validation accuracy')
+    plt.xlabel('Epochs')
+    plt.ylabel('Accuracy')
+    plt.legend()
+    plt.show()
 
     # x_mr, nb_ratios, num_words = nbsvm_pipeline(mr_data, mr_labels, max_features=100000, ngram=3, tfidf=False)
     # xt, xv, yt, yv = train_test_split(x_mr, mr_labels, test_size=0.3, random_state=42)
