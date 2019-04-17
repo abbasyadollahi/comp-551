@@ -27,7 +27,7 @@ class LemmaTokenizer:
 def get_vectorizer(max_features, binary=False, ngram=1, tfidf=False):
     vectorizer = CountVectorizer(tokenizer=LemmaTokenizer(), max_features=max_features, ngram_range=(1, ngram))
     if tfidf:
-        vectorizer = TfidfVectorizer(tokenizer=LemmaTokenizer(), max_features=max_features, norm='l2')
+        vectorizer = TfidfVectorizer(tokenizer=LemmaTokenizer(), max_features=max_features, ngram_range=(1, ngram), norm='l2')
     if binary:
         vectorizer.set_params(binary=True)
     return vectorizer
