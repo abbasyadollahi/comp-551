@@ -20,7 +20,7 @@ def execute_pipeline(title, pipeline, x, y, x_v, y_v, x_t, y_t):
     print(f'Training time: {train_time-start}')
     print(f'Training accuracy: {pipeline.score(x, y)}')
     print(f'Validation accuracy: {pipeline.score(x_v, y_v)}')
-    # print(f'Test accuracy: {pipeline.score(x_t, y_t)}')
+    print(f'Test accuracy: {pipeline.score(x_t, y_t)}')
     print(f'Scoring time: {time.time()-train_time}s')
 
 if __name__ == '__main__':
