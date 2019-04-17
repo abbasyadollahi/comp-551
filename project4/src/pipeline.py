@@ -21,8 +21,8 @@ class LemmaTokenizer:
     def __call__(self, doc):
         tokens = word_tokenize(doc)
         # tokens_no_stop = [t for t in tokens if t not in self.stop_words]
-        # return tokens
-        return [self.wnl.lemmatize(t) for t in tokens]
+        return tokens
+        # return [self.wnl.lemmatize(t) for t in tokens]
 
 def get_vectorizer(max_features, binary=False, ngram=1, tfidf=False):
     vectorizer = CountVectorizer(tokenizer=LemmaTokenizer(), max_features=max_features, ngram_range=(1, ngram))
@@ -36,7 +36,7 @@ def linear_svc_pipeline(max_features, ngram=1, tfidf=False):
     vectorizer = get_vectorizer(max_features, ngram=ngram, tfidf=tfidf)
     pipeline = Pipeline([
         ('vect', vectorizer),
-        ('clf', LinearSVC(C=1, tol=1e-4, max_iter=1000))
+        ('clf', LinearSVC(loss='squared_hinge', C=1, tol=1e-4, max_iter=1000))
     ])
     return pipeline
 
