@@ -8,10 +8,16 @@ from keras.layers.core import Activation
 from keras.layers import Input, Embedding, Flatten, dot
 from keras.optimizers import Adam
 from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.datasets import load_files
 
-DATA_DIR = op.abspath(op.join(__file__, op.pardir, op.pardir, 'data'))
-MR_FILE = op.join(DATA_DIR, 'mr')
+from data import load_mr
+from pipeline import get_vectorizer
 
-def load_mr_data():
-    return pd.read_pickle(MR_FILE)
+train_data, train_labels, dev_data, dev_labels, test_data, test_labels = load_mr()
+
+print(train_data[:3])
+print(train_labels[:3])
+
+def nbsvm_pipeline(max_features, bigram=False, trigram=False, tfidf=False):
+    vectorizer = get_vectorizer(max_features, binary=True, bigram=bigram, trigram=trigram, tfidf=tfidf)
+    nb = NaiveBayes(vectorizer)
+    return nb

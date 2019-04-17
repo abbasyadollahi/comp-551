@@ -23,7 +23,7 @@ if __name__ == '__main__':
     sst_train_data, sst_train_labels, sst_dev_data, sst_dev_labels, sst_test_data, sst_test_labels = load_data('SST2.pkl')
     print(f'Time to load data: {time.time()-start}s')
 
-    # pipeline = linear_svc_pipeline(max_features=None, bigram=True, tfidf=True)
+    # pipeline = linear_svc_pipeline(max_features=None, ngram=2, tfidf=True)
     # execute_pipeline('Linear SVC - MR Dataset', pipeline, mr_train_data, mr_train_labels, mr_dev_data, mr_dev_labels)
     # execute_pipeline('Linear SVC - SST Dataset', pipeline, sst_train_data, sst_train_labels, sst_dev_data, sst_dev_labels)
 
@@ -33,13 +33,13 @@ if __name__ == '__main__':
         'clf__max_iter': [500, 1000, 2000]
     }
 
-    pipeline = linear_svc_pipeline(max_features=None, bigram=True, tfidf=True)
+    pipeline = linear_svc_pipeline(max_features=None, ngram=2, tfidf=True)
     cv = GridSearchCV(pipeline, param_grid, iid=False, cv=5, verbose=1, n_jobs=-1)
     cv.fit(mr_train_data, mr_train_labels)
     print("Best parameter (CV score=%0.3f):" % cv.best_score_)
     print(cv.best_params_)
 
-    pipeline = linear_svc_pipeline(max_features=None, bigram=True, tfidf=True)
+    pipeline = linear_svc_pipeline(max_features=None, ngram=2, tfidf=True)
     cv = GridSearchCV(pipeline, param_grid, iid=False, cv=5, verbose=1, n_jobs=-1)
     cv.fit(sst_train_data, sst_train_labels)
     print("Best parameter (CV score=%0.3f):" % cv.best_score_)

@@ -1,11 +1,11 @@
-from sklearn.svm import LinearSVC
+from nltk import pos_tag
+from nltk.corpus import stopwords, wordnet as wn
+from nltk.stem import WordNetLemmatizer
+from nltk.tokenize import word_tokenize
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.linear_model import LogisticRegression, SGDClassifier
 from sklearn.pipeline import Pipeline
-from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
-from nltk.tokenize import word_tokenize
-from nltk.stem import WordNetLemmatizer
-from nltk.corpus import stopwords, wordnet as wn
-from nltk import pos_tag
+from sklearn.svm import LinearSVC
 
 class LemmaTokenizer:
     '''
@@ -24,22 +24,23 @@ class LemmaTokenizer:
         # return tokens
         return [self.wnl.lemmatize(t) for t in tokens]
 
-def get_vectorizer(max_features, binary=False, bigram=False, trigram=False, tfidf=False):
-    vectorizer = CountVectorizer(tokenizer=LemmaTokenizer(), max_features=max_features)
+def get_vectorizer(max_features, binary=False, ngram=1, tfidf=False):
+    vectorizer = CountVectorizer(tokenizer=LemmaTokenizer(), max_features=max_features, ngram_range=(1, ngram))
     if tfidf:
         vectorizer = TfidfVectorizer(tokenizer=LemmaTokenizer(), max_features=max_features, norm='l2')
     if binary:
         vectorizer.set_params(binary=True)
-    if bigram:
-        vectorizer.set_params(ngram_range=(1, 2))
-    if trigram:
-        vectorizer.set_params(ngram_range=(1, 3))
     return vectorizer
 
-def linear_svc_pipeline(max_features, bigram=False, trigram=False, tfidf=False):
-    vectorizer = get_vectorizer(max_features, bigram=bigram, tfidf=tfidf)
+def linear_svc_pipeline(max_features, ngram=1, tfidf=False):
+    vectorizer = get_vectorizer(max_features, ngram=ngram, tfidf=tfidf)
     pipeline = Pipeline([
         ('vect', vectorizer),
         ('clf', LinearSVC(C=1, tol=1e-4, max_iter=1000))
     ])
     return pipeline
+
+# def nbsvm_pipeline(max_features, ngram=1, tfidf=False):
+#     vectorizer = get_vectorizer(max_features, binary=True, ngram=ngram, tfidf=tfidf)
+#     nb = NaiveBayes(vectorizer)
+#     return nb
