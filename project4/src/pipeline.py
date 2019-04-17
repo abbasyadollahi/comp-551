@@ -1,11 +1,12 @@
-from nltk import pos_tag
-from nltk.corpus import stopwords, wordnet as wn
+import numpy as np
+from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
-from sklearn.linear_model import LogisticRegression, SGDClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.svm import LinearSVC
+
+from nbsvm import build_nbsvm
 
 class LemmaTokenizer:
     '''
@@ -32,7 +33,7 @@ def get_vectorizer(max_features, binary=False, ngram=1, tfidf=False):
         vectorizer.set_params(binary=True)
     return vectorizer
 
-def linear_svc_pipeline(max_features, ngram=1, tfidf=False):
+def linear_svc_pipeline(max_features=None, ngram=1, tfidf=False):
     vectorizer = get_vectorizer(max_features, ngram=ngram, tfidf=tfidf)
     pipeline = Pipeline([
         ('vect', vectorizer),
@@ -40,7 +41,10 @@ def linear_svc_pipeline(max_features, ngram=1, tfidf=False):
     ])
     return pipeline
 
-# def nbsvm_pipeline(max_features, ngram=1, tfidf=False):
-#     vectorizer = get_vectorizer(max_features, binary=True, ngram=ngram, tfidf=tfidf)
-#     nb = NaiveBayes(vectorizer)
-#     return nb
+def nbsvm_pipeline(data, labels, max_features=None, ngram=1, tfidf=False):
+    vectorizer = get_vectorizer(max_features, binary=True, ngram=ngram, tfidf=tfidf)
+    dtm_train = vectorizer.fit_transform(data)
+    num_words = len(vectorizer.vocabulary_) + 1
+
+    pipeline, x_train = build_nbsvm(dtm_train, labels, num_words)
+    return pipeline, x_train

@@ -1,6 +1,7 @@
 import re
 import os.path as op
-from pandas import DataFrame, read_pickle
+import numpy as np
+from pandas import read_pickle
 
 DATA_DIR = op.abspath(op.join(__file__, op.pardir, op.pardir, 'data'))
 MR_FILE = 'MR.pkl'
@@ -16,21 +17,22 @@ def load_data(filename):
     test_labels = []
     for idx, row in df.iterrows():
         sentence = clean_sentence(row['sentence'])
+        label = row['label']
         if row['split'] == 'train':
             train_data.append(sentence)
-            train_labels.append(row['label'])
+            train_labels.append(label)
         elif row['split'] == 'dev':
             dev_data.append(sentence)
-            dev_labels.append(row['label'])
+            dev_labels.append(label)
         elif row['split'] == 'test':
             test_data.append(sentence)
-            test_labels.append(row['label'])
+            test_labels.append(label)
         else:
             raise Exception(f'Unknown label: {row["split"]}')
     if len(dev_data) == 0 or len(test_data) == 0:
-        return train_data, train_labels
+        return np.array(train_data), np.array(train_labels)
     else:
-        return train_data, train_labels, dev_data, dev_labels, test_data, test_labels
+        return np.array(train_data), np.array(train_labels), np.array(dev_data), np.array(dev_labels), np.array(test_data), np.array(test_labels)
 
 def load_mr():
     return load_data(MR_FILE)
