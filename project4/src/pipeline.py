@@ -16,21 +16,16 @@ class LemmaTokenizer:
 
     def __init__(self):
         self.wnl = WordNetLemmatizer()
-        self.stop_words = set(stopwords.words('english'))
-        self.stop_words.update(['&', "'", "''", '``', '(', ')', ',', ':', ';'])
 
     def __call__(self, doc):
         tokens = word_tokenize(doc)
-        # tokens_no_stop = [t for t in tokens if t not in self.stop_words]
         return tokens
         # return [self.wnl.lemmatize(t) for t in tokens]
 
-def get_vectorizer(max_features, binary=False, ngram=1, tfidf=False):
+def get_vectorizer(max_features, ngram=1, tfidf=False):
     vectorizer = CountVectorizer(tokenizer=LemmaTokenizer(), max_features=max_features, ngram_range=(1, ngram))
     if tfidf:
         vectorizer = TfidfVectorizer(tokenizer=LemmaTokenizer(), max_features=max_features, ngram_range=(1, ngram), norm='l2')
-    if binary:
-        vectorizer.set_params(binary=True)
     return vectorizer
 
 def linear_svc_pipeline(max_features=None, ngram=1, tfidf=False):
