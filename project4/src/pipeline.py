@@ -1,4 +1,3 @@
-import numpy as np
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
@@ -6,7 +5,7 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.pipeline import Pipeline
 from sklearn.svm import LinearSVC
 
-from nbsvm import build_nbsvm
+from nbsvm import build_nbsvm_data
 
 class LemmaTokenizer:
     '''
@@ -16,6 +15,8 @@ class LemmaTokenizer:
 
     def __init__(self):
         self.wnl = WordNetLemmatizer()
+        # self.stop_words = set(stopwords.words('english'))
+        # self.stop_words.update(['&', "'", "''", '``', '(', ')', ',', ':', ';'])
 
     def __call__(self, doc):
         tokens = word_tokenize(doc)
@@ -41,5 +42,5 @@ def nbsvm_pipeline(data, labels, max_features=None, ngram=1, tfidf=False):
     dtm_train = vectorizer.fit_transform(data)
     num_words = len(vectorizer.vocabulary_) + 1
 
-    pipeline, x_train = build_nbsvm(dtm_train, labels, num_words)
-    return pipeline, x_train
+    x_train, nb_ratios = build_nbsvm_data(dtm_train, labels)
+    return x_train, nb_ratios, num_words
