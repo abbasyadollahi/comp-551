@@ -28,7 +28,7 @@ if __name__ == '__main__':
 
     print('Linear SVC - MR Dataset')
     pipeline = linear_svc_pipeline(max_features=None, ngram=2, tfidf=True)
-    scores = cross_val_score(pipeline, mr_data, mr_labels, cv=5, n_jobs=-1)
+    scores = cross_val_score(pipeline, mr_data, mr_labels, cv=10, n_jobs=-1)
     print(f'Training Accuracy: {scores.mean()}')
-    mr_pred = cross_val_predict(pipeline, mr_data, mr_labels, cv=5, n_jobs=-1)
+    mr_pred = cross_val_predict(pipeline, mr_data, mr_labels, cv=10, n_jobs=-1)
     print(f'Validation accuracy: {accuracy_score(mr_labels, mr_pred)}')
