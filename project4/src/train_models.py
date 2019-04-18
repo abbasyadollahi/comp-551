@@ -16,8 +16,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 PLOT_SVC_MODEL = False
 PLOT_NBSVM_MODEL = False
 
-def execute_pipeline(title, pipeline, x, y, x_v, y_v, x_t, y_t):
-    print(title)
+def execute_pipeline(pipeline, x, y, x_v, y_v, x_t, y_t):
     start = time.time()
     pipeline.fit(x, y)
     train_time = time.time()
@@ -45,22 +44,29 @@ if __name__ == '__main__':
     # sst_train_data, sst_train_labels, sst_dev_data, sst_dev_labels, sst_test_data, sst_test_labels = load_sst2()
     print(f'Time to load data: {time.time()-start}s')
 
-    # print('##### Training Linear SVC #####')
-    # pipeline = linear_svc_pipeline(max_features=None, ngram=2, tfidf=True)
-    # execute_pipeline('Linear SVC - SST Dataset', pipeline, sst_train_data, sst_train_labels, sst_dev_data, sst_dev_labels, sst_test_data, sst_test_labels)
+    ########################################
+    print('##### Training Linear SVC #####')
+    ########################################
 
-    # print('Linear SVC - MR Dataset')
-    # pipeline = linear_svc_pipeline(max_features=None, ngram=2, tfidf=True)
-    # scores = cross_val_score(pipeline, mr_data, mr_labels, cv=10, n_jobs=-1)
-    # print(f'Training Accuracy: {scores.mean()}')
-    # mr_pred = cross_val_predict(pipeline, mr_data, mr_labels, cv=10, n_jobs=-1)
-    # print(f'Validation Accuracy: {accuracy_score(mr_labels, mr_pred)}')
+    print('Linear SVC - SST2 Dataset')
+    ##################################
+    pipeline = linear_svc_pipeline(max_features=None, ngram=2, tfidf=True)
+    execute_pipeline(pipeline, sst_train_data, sst_train_labels, sst_dev_data, sst_dev_labels, sst_test_data, sst_test_labels)
+
+    print('Linear SVC - MR Dataset')
+    ################################
+    pipeline = linear_svc_pipeline(max_features=None, ngram=2, tfidf=True)
+    scores = cross_val_score(pipeline, mr_data, mr_labels, cv=10, n_jobs=-1)
+    print(f'Training Accuracy: {scores.mean()}')
+    mr_pred = cross_val_predict(pipeline, mr_data, mr_labels, cv=10, n_jobs=-1)
+    print(f'Validation Accuracy: {accuracy_score(mr_labels, mr_pred)}')
 
 
+    #############################################
     print('##### Training Naive Bayes SVM #####')
+    #############################################
     early_stop = EarlyStopping(monitor='val_acc', patience=4, verbose=1)
 
-    #####################################
     print('Naive Bayes SVM - MR Dataset')
     #####################################
     hp_grid = {
@@ -99,7 +105,6 @@ if __name__ == '__main__':
     best_model = hp_histories[hp_scores.index(max(hp_scores))]
     plot_model_history(best_model, 'Naive Bayes SVM', 'MR')
 
-    #######################################
     print('Naive Bayes SVM - SST2 Dataset')
     #######################################
     hp_grid = {

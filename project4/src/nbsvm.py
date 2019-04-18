@@ -24,7 +24,7 @@ def build_nbsvm_data(dtm_train, labels, max_len=500):
     x_train = np.array(x)
 
     def nb_prob(dtm, y, y_i):
-        return (dtm[y==y_i].sum(0)+1) / ((y==y_i).sum()+1)
+        return (dtm[y==y_i].sum(0)+1) / ((y==y_i).sum()+2)
 
     nb_ratios = np.log(nb_prob(dtm_train, labels, 1) / nb_prob(dtm_train, labels, 0))
     nb_ratios = np.squeeze(np.array(nb_ratios))
