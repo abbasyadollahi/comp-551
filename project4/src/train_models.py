@@ -41,7 +41,7 @@ if __name__ == '__main__':
     print('Loading data...')
     start = time.time()
     mr_data, mr_labels = load_mr()
-    # sst_train_data, sst_train_labels, sst_dev_data, sst_dev_labels, sst_test_data, sst_test_labels = load_sst2()
+    sst_train_data, sst_train_labels, sst_dev_data, sst_dev_labels, sst_test_data, sst_test_labels = load_sst2()
     print(f'Time to load data: {time.time()-start}s')
 
     ########################################
@@ -136,11 +136,5 @@ if __name__ == '__main__':
 
                 hp_scores.append(score)
                 hp_histories.append(history)
-                print(f'Test Acc: {score:.5f}')
 
     best_model = hp_histories[hp_scores.index(max(hp_scores))]
-    plot_model_history(best_model, 'Naive Bayes SVM', 'SST2')
-
-    # Plot NBSVM model architecture
-    if PLOT_NBSVM_MODEL:
-        plot_model(model, to_file='./project4/figures/nbsvm_arch.png', show_shapes=True)

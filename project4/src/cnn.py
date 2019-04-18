@@ -9,7 +9,7 @@ from matplotlib import pyplot as plt
 
 from data import load_mr, load_sst2
 
-def get_conv_pool(x_input, n_grams=[3, 4, 5], feature_maps=100):
+def get_conv_layers(x_input, n_grams=[3, 4, 5], feature_maps=100):
     branches = []
     for n in n_grams:
         branch = Conv1D(filters=feature_maps, kernel_size=n, activation='relu')(x_input)
@@ -41,7 +41,7 @@ embed_layer = Embedding(input_dim=embeddings.shape[0], output_dim=embeddings.sha
 
 i = Input(shape=(max_len,))
 embed = embed_layer(i)
-conv_layers = get_conv_pool(embed)
+conv_layers = get_conv_layers(embed)
 concat = concatenate(conv_layers)
 concat = Dropout(0.5)(concat)
 fc = Dense(1, activation='sigmoid')(concat)
@@ -51,7 +51,7 @@ model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy']
 model.summary()
 plot_model(model, to_file='./project4/cnn_arch.png', show_shapes=True)
 
-history = model.fit(X_train, mr_labels_train, epochs=7, verbose=1, validation_data=(X_test, mr_labels_test), batch_size=50)
+history = model.fit(X_train, mr_labels_train, epochs=10, verbose=1, validation_data=(X_test, mr_labels_test), batch_size=64)
 loss, accuracy = model.evaluate(X_train, mr_labels_train)
 print(f'Training accuracy: {accuracy}')
 loss, accuracy = model.evaluate(X_test, mr_labels_test)
