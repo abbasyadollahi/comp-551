@@ -37,8 +37,8 @@ def linear_svc_pipeline(max_features=None, ngram=1, tfidf=False):
     ])
     return pipeline
 
-def nbsvm_pipeline(data, labels, max_features=None, ngram=1, tfidf=False):
-    vectorizer = get_vectorizer(max_features, binary=True, ngram=ngram, tfidf=tfidf)
+def nbsvm_pipeline(data, labels, max_features=None, ngram=1):
+    vectorizer = get_vectorizer(max_features, binary=True, ngram=ngram)
     dtm_train = vectorizer.fit_transform(data)
     num_words = len(vectorizer.vocabulary_) + 1
 

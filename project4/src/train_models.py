@@ -32,8 +32,8 @@ def plot_model_history(history, model_name, dataset_name):
     acc = history_dict['acc']
     val_acc = history_dict['val_acc']
     epochs = range(1, len(acc) + 1)
-    plt.plot(epcs, acc, 'bo', label='Training acc')
-    plt.plot(epcs, val_acc, 'b', label='Validation acc')
+    plt.plot(epochs, acc, 'bo', label='Training acc')
+    plt.plot(epochs, val_acc, 'b', label='Validation acc')
     plt.title(f'Training and Validation Accuracy of {model_name} - {dataset_name}')
     plt.xlabel('Epochs'), plt.ylabel('Accuracy'), plt.legend()
     plt.show()
@@ -64,35 +64,36 @@ if __name__ == '__main__':
     print('Naive Bayes SVM - MR Dataset')
     #####################################
     hp_grid = {
-        'ngram': [1, 2, 3],
+        'ngram': [2, 3],
         'max_features': [5000, 15000, 50000],
         'batch_size': [16, 32, 64],
         'epochs': [5, 10, 15]
     }
-    x_mr, nb_ratios, num_words = nbsvm_pipeline(mr_data, mr_labels, max_features=100000, ngram=3, tfidf=False)
 
     hp_scores = []
     hp_histories = []
-    for epochs in hp_grid['epochs']:
-        for batch_size in hp_grid['batch_size']:
-            print(f'Hyper Parameters: Batch Size={batch_size} | Epochs={epochs}')
+    for ngram in hp_grid['ngram']:
+        x_mr, nb_ratios, num_words = nbsvm_pipeline(mr_data, mr_labels, max_features=100000, ngram=ngram)
+        for epochs in hp_grid['epochs']:
+            for batch_size in hp_grid['batch_size']:
+                print(f'Hyper Parameters: Batch Size={batch_size} | Epochs={epochs}')
 
-            cv_scores = []
-            cv_histories = []
-            kfold = StratifiedKFold(n_splits=10, shuffle=True, random_state=42)
-            for trn, tst in kfold.split(mr_data, mr_labels):
-                model = get_nbsvm_model(num_words, nb_ratios=nb_ratios)
-                history = model.fit(x_mr[trn], mr_labels[trn], validation_data=(x_mr[tst], mr_labels[tst]), batch_size=batch_size, epochs=epochs, callbacks=[early_stop], verbose=0)
-                score = model.evaluate(x_mr[tst], mr_labels[tst], verbose=0)[1]
+                cv_scores = []
+                cv_histories = []
+                kfold = StratifiedKFold(n_splits=10, shuffle=True, random_state=42)
+                for trn, tst in kfold.split(mr_data, mr_labels):
+                    model = get_nbsvm_model(num_words, nb_ratios=nb_ratios)
+                    history = model.fit(x_mr[trn], mr_labels[trn], validation_data=(x_mr[tst], mr_labels[tst]), batch_size=batch_size, epochs=epochs, callbacks=[early_stop], verbose=0)
+                    score = model.evaluate(x_mr[tst], mr_labels[tst], verbose=0)[1]
 
-                cv_scores.append(score)
-                cv_histories.append(history)
-                print(f'Val Acc: {score:.2f}')
+                    cv_scores.append(score)
+                    cv_histories.append(history)
+                    print(f'Val Acc: {score:.2f}')
 
-            best_model_idx = cv_scores.index(max(cv_scores))
-            hp_scores.append(cv_scores[best_model_idx])
-            hp_histories.append(cv_histories[best_model_idx])
-            print(f'Avg: {np.mean(cv_scores):.2f} (+/- {np.std(cv_scores):.2f})')
+                best_model_idx = cv_scores.index(max(cv_scores))
+                hp_scores.append(cv_scores[best_model_idx])
+                hp_histories.append(cv_histories[best_model_idx])
+                print(f'Avg: {np.mean(cv_scores):.2f} (+/- {np.std(cv_scores):.2f})')
 
     best_model = hp_histories[hp_scores.index(max(hp_scores))]
     plot_model_history(best_model, 'Naive Bayes SVM', 'MR')
@@ -112,7 +113,7 @@ if __name__ == '__main__':
     sst_data = np.concatenate([sst_train_data, sst_dev_data, sst_test_data])
     sst_labels = np.concatenate([sst_train_labels, sst_dev_labels, sst_test_labels])
 
-    x_sst, nb_ratios, num_words = nbsvm_pipeline(sst_data, sst_labels, max_features=100000, ngram=3, tfidf=False)
+    x_sst, nb_ratios, num_words = nbsvm_pipeline(sst_data, sst_labels, max_features=250000, ngram=3)
     x_train, x_dev, x_test = x_sst[:split1], x_sst[split1:split2], x_sst[split2:split3]
     y_train, y_dev, y_test = sst_labels[:split1], sst_labels[split1:split2], sst_labels[split2:split3]
 
@@ -126,11 +127,11 @@ if __name__ == '__main__':
             history = model.fit(x_train, y_train, validation_data=(x_dev, y_dev), batch_size=batch_size, epochs=epochs, callbacks=[early_stop])
             score = model.evaluate(x_test, y_test, verbose=0)[1]
 
-            hp_scores.append(acc)
+            hp_scores.append(score)
             hp_histories.append(history)
             print(f'Test Acc: {score:.2f}')
 
-    best_model = cv_histories[cv_scores.index(max(cv_scores))]
+    best_model = hp_histories[hp_scores.index(max(hp_scores))]
     plot_model_history(best_model, 'Naive Bayes SVM', 'SST2')
 
     # Plot NBSVM model architecture
