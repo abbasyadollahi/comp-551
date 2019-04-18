@@ -42,7 +42,7 @@ if __name__ == '__main__':
     print('Loading data...')
     start = time.time()
     mr_data, mr_labels = load_mr()
-    sst_train_data, sst_train_labels, sst_dev_data, sst_dev_labels, sst_test_data, sst_test_labels = load_sst2()
+    # sst_train_data, sst_train_labels, sst_dev_data, sst_dev_labels, sst_test_data, sst_test_labels = load_sst2()
     print(f'Time to load data: {time.time()-start}s')
 
     # print('##### Training Linear SVC #####')
@@ -64,7 +64,7 @@ if __name__ == '__main__':
     print('Naive Bayes SVM - MR Dataset')
     #####################################
     hp_grid = {
-        'ngram': [1, 2, 3]
+        'ngram': [1, 2, 3],
         'max_features': [5000, 15000, 50000],
         'batch_size': [16, 32, 64],
         'epochs': [5, 10, 15]
@@ -82,7 +82,7 @@ if __name__ == '__main__':
             kfold = StratifiedKFold(n_splits=10, shuffle=True, random_state=42)
             for trn, tst in kfold.split(mr_data, mr_labels):
                 model = get_nbsvm_model(num_words, nb_ratios=nb_ratios)
-                history = model.fit(x_mr[trn], mr_labels[trn], validation_data=(x_mr[tst], mr_labels[tst]), batch_size=batch_size, epochs=epochs, callbacks=early_stop, verbose=0)
+                history = model.fit(x_mr[trn], mr_labels[trn], validation_data=(x_mr[tst], mr_labels[tst]), batch_size=batch_size, epochs=epochs, callbacks=[early_stop], verbose=0)
                 score = model.evaluate(x_mr[tst], mr_labels[tst], verbose=0)[1]
 
                 cv_scores.append(score)
@@ -101,7 +101,7 @@ if __name__ == '__main__':
     print('Naive Bayes SVM - SST2 Dataset')
     #######################################
     hp_grid = {
-        'ngram': [1, 2, 3]
+        'ngram': [1, 2, 3],
         'max_features': [5000, 15000, 50000],
         'batch_size': [16, 32, 64],
         'epochs': [5, 10, 15]
@@ -123,7 +123,7 @@ if __name__ == '__main__':
             print(f'Hyper Parameters: Batch Size={batch_size} | Epochs={epochs}')
 
             model = get_nbsvm_model(num_words, nb_ratios=nb_ratios)
-            history = model.fit(x_train, y_train, validation_data=(x_dev, y_dev), batch_size=batch_size, epochs=epochs, callbacks=early_stop)
+            history = model.fit(x_train, y_train, validation_data=(x_dev, y_dev), batch_size=batch_size, epochs=epochs, callbacks=[early_stop])
             score = model.evaluate(x_test, y_test, verbose=0)[1]
 
             hp_scores.append(acc)
