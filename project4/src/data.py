@@ -15,7 +15,7 @@ def load_data(filename):
     dev_labels = []
     test_data = []
     test_labels = []
-    for idx, row in df.iterrows():
+    for _, row in df.itertuples():
         split = row['split']
         sentence = clean_sentence(row['sentence'])
         label = row['label']

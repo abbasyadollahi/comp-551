@@ -9,7 +9,7 @@ from matplotlib import pyplot as plt
 
 from data import load_mr, load_sst2
 
-def get_conv_layers(x_input, n_grams=[3, 4, 5], feature_maps=100):
+def get_conv_layers(x_input, n_grams=(3, 4, 5), feature_maps=100):
     branches = []
     for n in n_grams:
         branch = Conv1D(filters=feature_maps, kernel_size=n, activation='relu')(x_input)

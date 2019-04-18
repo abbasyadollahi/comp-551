@@ -128,13 +128,19 @@ if __name__ == '__main__':
 
         for epochs in hp_grid['epochs']:
             for batch_size in hp_grid['batch_size']:
-                print(f'Hyper Parameters: Batch Size={batch_size} | Epochs={epochs}')
+                print(f'Hyper Parameters: Ngram={ngram} | Batch Size={batch_size} | Epochs={epochs}')
 
                 model = get_nbsvm_model(num_words, nb_ratios=nb_ratios)
-                history = model.fit(x_train, y_train, validation_data=(x_dev, y_dev), batch_size=batch_size, epochs=epochs, callbacks=[early_stop])
+                history = model.fit(x_train, y_train, validation_data=(x_dev, y_dev), batch_size=batch_size, epochs=epochs, callbacks=[early_stop], verbose=0)
                 score = model.evaluate(x_test, y_test, verbose=0)[1]
 
                 hp_scores.append(score)
                 hp_histories.append(history)
+                print(f'Test Acc: {score:.5f}')
 
     best_model = hp_histories[hp_scores.index(max(hp_scores))]
+    plot_model_history(best_model, 'Naive Bayes SVM', 'SST2')
+
+    # Plot NBSVM model architecture
+    if PLOT_NBSVM_MODEL:
+        plot_model(model, to_file='./project4/figures/nbsvm_arch.png', show_shapes=True)

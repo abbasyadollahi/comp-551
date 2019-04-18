@@ -1,6 +1,4 @@
 import numpy as np
-import os.path as op
-from keras import backend as K
 from keras.models import Model
 from keras.layers.core import Activation
 from keras.layers import Input, Embedding, Flatten, dot
